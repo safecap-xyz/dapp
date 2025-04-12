@@ -41,6 +41,77 @@ body {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+/* Content Section Styles */
+.content-section {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.content-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .content-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .content-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.content-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.content-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.content-title {
+  font-family: var(--font-faustina);
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.content-text {
+  font-family: var(--font-faustina);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.content-image {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+/* Full-width content section */
+.content-full {
+  width: 100%;
+  padding: 5rem 2rem;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.content-full-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
