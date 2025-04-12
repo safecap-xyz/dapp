@@ -1,9 +1,23 @@
+/* Add this at the top of your file */
+/* Define font variables */
+:root {
+  --font-faustina: 'Faustina', serif;
+}
+
+/* You can also add a default font-family to the body */
+body {
+  font-family: var(--font-faustina);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-  background-color: #61dafbaa;
+  /* background-color: #61dafbaa; */
 }
 
 .bg-main {

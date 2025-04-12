@@ -10,7 +10,7 @@ function App() {
     <>
     <h1 className="font-faustina font-bold">SafeCap.xyz</h1>
     <div className='content-main'>
-      <h2 className='text-[46px]'>The Future of Crowdfunding is Here.</h2>
+      <h2 className='text-[46px] font-faustina font-bold'>The Future of Crowdfunding is Here.</h2>
       
     </div>
 
