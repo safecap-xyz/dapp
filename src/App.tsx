@@ -15,7 +15,7 @@ function App() {
 
     <section className="content-full">
   <div className="content-full-inner">
-      <h2 className='text-[46px] font-faustina font-bold'>The Future of Crowdfunding is Here.</h2>
+      <h2 className='text-[46px] font-faustina font-bold'>The Future of Crowd-funding is Here.</h2>
     <p className="content-text">
       • Raise Funds Your Way: Accept ETH & ERC20 donations.<br/>
       • Reward Support with NFTs: Automatically mint unique digital collectibles for backers.<br/>
