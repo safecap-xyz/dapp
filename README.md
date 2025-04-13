@@ -1,11 +1,84 @@
-# React + TypeScript + Vite
+# SafeCap - Blockchain-Based Crowdfunding Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SafeCap is a decentralized crowdfunding platform built on blockchain technology that enables transparent, secure, and efficient fundraising for projects.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Wallet Integration**: Connect with MetaMask, WalletConnect, and other popular Ethereum wallets
+- **Native Token Support**: Accept ETH donations for your project
+- **ERC20 Support**: Accept various ERC20 tokens as donations
+- **NFT Rewards**: Automatically mint unique digital collectibles for backers
+- **Transparent Funding**: All donations and project progress tracked on the blockchain
+- **All-or-Nothing Model**: Creators receive funds only if the goal is met
+
+## Technologies
+
+- **React + TypeScript + Vite**: Modern front-end stack
+- **Wagmi**: React hooks for Ethereum, simplifying wallet connections and contract interactions
+- **Viem**: TypeScript interface for Ethereum
+- **React Query**: Data fetching and state management for blockchain data
+
+## Wallet Connection Setup
+
+The dApp includes wallet connection capabilities using wagmi and viem. To use with your project:
+
+1. **WalletConnect Project ID**: Replace the placeholder in `src/web3/config.ts` with your actual WalletConnect project ID:
+   ```ts
+   walletConnect({
+     projectId: 'YOUR_WALLET_CONNECT_PROJECT_ID',
+   }),
+   ```
+   You can obtain a project ID by signing up at [WalletConnect Cloud](https://cloud.walletconnect.com/).
+
+2. **Supported Networks**: By default, the dApp supports Ethereum Mainnet and Sepolia testnet. To add more networks, modify the chains array in `src/web3/config.ts`:
+   ```ts
+   chains: [mainnet, sepolia, arbitrum, optimism],
+   ```
+
+3. **Custom Contract Interactions**: Use the provided `useTransaction` hook from `src/web3/services/TransactionService.ts` to interact with your smart contracts:
+   ```ts
+   const { sendContractTransaction, isLoading, isSuccess, receipt } = useTransaction();
+   
+   // Example usage
+   const handleDonation = async () => {
+     await sendContractTransaction({
+       address: '0xYourContractAddress',
+       abi: yourContractABI,
+       functionName: 'donate',
+       args: [],
+       value: parseEther('0.1')
+     });
+   };
+   ```
+
+## Project Structure
+
+### Web3 Integration
+```
+src/
+├── web3/
+│   ├── config.ts                 # Wagmi configuration
+│   ├── WagmiProvider.tsx         # Provider wrapper for the app
+│   ├── utils.ts                  # Common utility functions
+│   ├── hooks/
+│   │   ├── useWallet.ts          # Wallet connection and state hook
+│   │   └── useTokenBalance.ts    # Token balance hook
+│   └── services/
+│       └── TransactionService.ts # Contract interaction utilities
+├── components/
+│   ├── WalletConnect.tsx         # Wallet connection UI component
+│   └── AccountInfo.tsx           # Account information display
+└── App.tsx                       # Main application with wallet integration
+```
+
+### Key Components
+
+- **WagmiProvider**: Wraps the application with the necessary providers for wallet connectivity
+- **WalletConnect**: UI component for connecting and disconnecting wallets
+- **AccountInfo**: Displays information about the connected wallet account
+- **useWallet**: Custom hook that provides wallet state and connection details
+- **useTokenBalance**: Hook for fetching token balances from the blockchain
+- **TransactionService**: Utilities for sending transactions to smart contracts
 
 ## Expanding the ESLint configuration
 
