@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { type Address, type Hash, type TransactionReceipt } from 'viem'
+import { type Address, type Hash } from 'viem'
 import { useWalletClient, usePublicClient } from 'wagmi'
 
 // Import ABIs directly from JSON

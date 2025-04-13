@@ -7,7 +7,7 @@ import { useAccount, useBalance } from 'wagmi'
  * @returns Object containing the balance information
  */
 export function useTokenBalance(tokenAddress?: `0x${string}`) {
-  const { address, isConnected } = useAccount()
+  const { address } = useAccount()
   const [formattedBalance, setFormattedBalance] = useState<string>('0')
   
   const { data: balanceData, isLoading, refetch } = useBalance({

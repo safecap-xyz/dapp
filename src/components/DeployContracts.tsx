@@ -4,7 +4,7 @@ import { useWallet } from '../web3/hooks/useWallet'
 import { NetworkSwitcher } from './NetworkSwitcher'
 
 export function DeployContracts() {
-  const { isConnected, address, isSepoliaNetwork } = useWallet()
+  const { isConnected, isSepoliaNetwork } = useWallet()
   
   const {
     isDeploying,

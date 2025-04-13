@@ -1,10 +1,8 @@
-import { 
-  type Address, 
+import {
+  type Address,
   type Hash,
-  type TransactionReceipt, 
-  type TransactionRequest,
-  WaitForTransactionReceiptErrorType, 
-  type WriteContractReturnType
+  type TransactionReceipt,
+  type TransactionRequest
 } from 'viem'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import { useCallback, useState } from 'react'
@@ -33,49 +31,48 @@ const initialState: TransactionState = {
  */
 export function useTransaction() {
   const [txState, setTxState] = useState<TransactionState>(initialState)
-  
+
   // Initialize contract writing
   const { data: hash, isPending, writeContract, error: writeError } = useWriteContract()
-  
+
   // Wait for transaction receipt
-  const { 
-    data: receipt, 
-    isLoading: isWaiting, 
-    error: receiptError 
-  } = useWaitForTransactionReceipt({ 
-    hash,
-    enabled: !!hash,
+  const {
+    data: receipt,
+    isLoading: isWaiting,
+    error: receiptError
+  } = useWaitForTransactionReceipt({
+    hash
   })
 
   // Update state based on transaction progress
   useState(() => {
     if (hash && !txState.hash) {
-      setTxState(prev => ({ 
-        ...prev, 
-        isLoading: true, 
-        hash 
+      setTxState(prev => ({
+        ...prev,
+        isLoading: true,
+        hash
       }))
     }
-    
+
     if (isPending && !txState.isLoading) {
-      setTxState(prev => ({ 
-        ...prev, 
-        isLoading: true 
+      setTxState(prev => ({
+        ...prev,
+        isLoading: true
       }))
     }
-    
+
     if (receipt && !txState.receipt) {
-      setTxState(prev => ({ 
-        ...prev, 
+      setTxState(prev => ({
+        ...prev,
         isLoading: false,
         isSuccess: true,
         receipt
       }))
     }
-    
+
     if ((writeError || receiptError) && !txState.error) {
-      setTxState(prev => ({ 
-        ...prev, 
+      setTxState(prev => ({
+        ...prev,
         isLoading: false,
         isError: true,
         error: writeError || receiptError
@@ -95,11 +92,11 @@ export function useTransaction() {
       abi: any[]
       address: Address
       functionName: string
-      args?: any[]
+      args?: readonly any[]
       value?: bigint
     }) => {
       setTxState(initialState)
-      
+
       try {
         writeContract({
           abi,
@@ -109,13 +106,13 @@ export function useTransaction() {
           value,
         })
       } catch (error) {
-        setTxState(prev => ({ 
-          ...prev, 
-          isError: true, 
-          error: error instanceof Error ? error : new Error(String(error)) 
+        setTxState(prev => ({
+          ...prev,
+          isError: true,
+          error: error instanceof Error ? error : new Error(String(error))
         }))
       }
-    }, 
+    },
     [writeContract]
   )
 
@@ -126,17 +123,17 @@ export function useTransaction() {
   const sendTransaction = useCallback(
     async (tx: TransactionRequest) => {
       setTxState(initialState)
-      
+
       try {
         writeContract(tx as any)
       } catch (error) {
-        setTxState(prev => ({ 
-          ...prev, 
-          isError: true, 
-          error: error instanceof Error ? error : new Error(String(error)) 
+        setTxState(prev => ({
+          ...prev,
+          isError: true,
+          error: error instanceof Error ? error : new Error(String(error))
         }))
       }
-    }, 
+    },
     [writeContract]
   )
 
