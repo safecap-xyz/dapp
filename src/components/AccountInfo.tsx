@@ -1,7 +1,8 @@
 import { useWallet } from '../web3/hooks/useWallet'
+import { sepolia } from 'wagmi/chains'
 
 export function AccountInfo() {
-  const { isConnected, displayName, balance, address } = useWallet()
+  const { isConnected, displayName, balance, address, chainId, isSepoliaNetwork } = useWallet()
 
   if (!isConnected || !address) {
     return (
@@ -27,6 +28,13 @@ export function AccountInfo() {
             </span>
           </div>
         )}
+        <div className="flex justify-between">
+          <span className="font-medium">Network:</span>
+          <span className={isSepoliaNetwork ? "text-green-600" : "text-orange-600"}>
+            {isSepoliaNetwork ? "Sepolia Testnet" : `Chain ID: ${chainId || 'Unknown'}`}
+            {!isSepoliaNetwork && ' (Please switch to Sepolia)'}
+          </span>
+        </div>
       </div>
     </div>
   )

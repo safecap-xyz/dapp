@@ -11,6 +11,21 @@ SafeCap is a decentralized crowdfunding platform built on blockchain technology 
 - **Transparent Funding**: All donations and project progress tracked on the blockchain
 - **All-or-Nothing Model**: Creators receive funds only if the goal is met
 
+## Testnet Deployment
+
+The platform is configured to deploy contracts on the Sepolia testnet for development and testing.
+
+- **Network Configuration**: The app prioritizes Sepolia testnet over mainnet
+- **Network Switcher**: Built-in component to help users switch to Sepolia
+- **Deployment Process**: Multi-step deployment of Factory, NFT, and Sample Campaign contracts
+- **Visual Indicators**: Clear UI elements indicating Sepolia testnet usage
+
+To deploy on the Sepolia testnet:
+1. Connect your wallet
+2. Switch to Sepolia testnet if not already connected
+3. Navigate to the "Deploy" tab
+4. Click "Deploy Contracts" and approve the transactions
+
 ## Technologies
 
 - **React + TypeScript + Vite**: Modern front-end stack

@@ -2,11 +2,12 @@ import './App.css'
 import { useState } from 'react'
 import { WalletConnect } from './components/WalletConnect'
 import { AccountInfo } from './components/AccountInfo'
+import { DeployContracts } from './components/DeployContracts'
+import { DonateCampaign } from './components/DonateCampaign'
 import { useWallet } from './web3/hooks/useWallet'
 
 function App() {
   const [currentNav, setCurrentNav] = useState('home');
-  const { isConnected, displayName } = useWallet();
 
   const handleNavClick = (key: string) => {
     setCurrentNav(key);
@@ -17,7 +18,10 @@ function App() {
       {/* Layout 1: Header-Content-Footer */}
       <div className="rounded-lg overflow-hidden">
         <div className="bg-[#001862] h-16 text-white flex items-center justify-between px-4">
-          <div className="font-bold text-xl">SafeCap</div>
+          <div className="flex items-center">
+            <div className="font-bold text-xl">SafeCap</div>
+            <div className="ml-2 text-sm bg-yellow-600 text-white px-2 py-0.5 rounded-full">Sepolia Testnet</div>
+          </div>
           <div className="flex items-center space-x-6">
             <nav>
               <ul className="flex space-x-6">
@@ -25,34 +29,53 @@ function App() {
                     onClick={() => handleNavClick('home')}>
                   Home
                 </li>
-                <li className={`cursor-pointer ${currentNav === 'projects' ? 'border-b-2 border-white' : ''}`}
-                    onClick={() => handleNavClick('projects')}>
-                  Projects
+                <li className={`cursor-pointer ${currentNav === 'deploy' ? 'border-b-2 border-white' : ''}`}
+                    onClick={() => handleNavClick('deploy')}>
+                  Deploy
+                </li>
+                <li className={`cursor-pointer ${currentNav === 'donate' ? 'border-b-2 border-white' : ''}`}
+                    onClick={() => handleNavClick('donate')}>
+                  Donate
                 </li>
                 <li className={`cursor-pointer ${currentNav === 'about' ? 'border-b-2 border-white' : ''}`}
                     onClick={() => handleNavClick('about')}>
                   About
-                </li>
-                <li>
-                  <a href="https://docs.safecap.xyz" target="_blank" rel="noopener noreferrer"
-                     className="hover:underline">
-                    Documentation
-                  </a>
                 </li>
               </ul>
             </nav>
             <WalletConnect />
           </div>
         </div>
-        <div className="bg-blue-700 min-h-[120px] text-white text-center leading-[120px]">
+        <div className="min-h-[120px] text-white text-center leading-[120px]">
 
           <div className="bg-main">
             <div className='content-main min-h-[900px]'>
+              {currentNav === 'deploy' && (
+                <div className="p-6">
+                  <h2 className="text-2xl font-bold mb-4">Deploy Contracts on Sepolia Testnet</h2>
+                  <p className="mb-6">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</p>
+
+                  <DeployContracts />
+                </div>
+              )}
+              
+              {currentNav === 'donate' && (
+                <div className="p-6">
+                  <h2 className="text-2xl font-bold mb-4">Donate to Test Campaign</h2>
+                  <p className="mb-6">Send a test donation to our sample campaign on the Sepolia testnet.</p>
+
+                  <DonateCampaign 
+                    key="donate-campaign"
+                    campaignAddress="0xa191f56cdce58622f8699b45042eb743f68b874f" 
+                  />
+                </div>
+              )}
+
               {currentNav === 'about' && (
                 <div className="p-6">
                   <h2 className="text-2xl font-bold mb-4">About SafeCap</h2>
                   <p className="mb-6">SafeCap is a decentralized crowdfunding platform built on blockchain technology that enables transparent, secure, and efficient fundraising for projects.</p>
-                  
+
                   <div className="mb-8">
                     <h3 className="text-xl font-bold mb-2">Your Wallet</h3>
                     <AccountInfo />
@@ -97,7 +120,11 @@ function App() {
 
             </section>
         </div>
-        <div className="bg-blue-500 text-white text-center py-4">Footer</div>
+        <div className="bg-[#001862] text-white text-center py-4">
+          <div className="container mx-auto">
+            <p>&copy; 2025 SafeCap.xyz. All rights reserved.</p>
+          </div>
+        </div>
       </div>
 
 
