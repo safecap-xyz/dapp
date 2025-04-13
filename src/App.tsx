@@ -45,7 +45,7 @@ function App() {
             <WalletConnect />
           </div>
         </div>
-        <div className="min-h-[120px] text-white text-center leading-[120px]">
+        <div className="min-h-[120px] text-white text-center">
 
           <div className="bg-main">
             <div className='content-main min-h-[900px]'>
