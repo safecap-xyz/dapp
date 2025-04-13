@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { metaMask, injected } from 'wagmi/connectors'
+import { metaMask } from 'wagmi/connectors'
 
 export function WalletConnect() {
   const { address, isConnected } = useAccount()
-  const { connect, connectors, isPending, pendingConnector, error } = useConnect()
+  const { connect, connectors, isPending, error } = useConnect()
   const { disconnect } = useDisconnect()
+  const [pendingConnectorId, setPendingConnectorId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [hasMetaMask, setHasMetaMask] = useState(false)
@@ -75,6 +76,7 @@ export function WalletConnect() {
       console.log('Connector details:', connector);
 
       setErrorMessage(null);
+      setPendingConnectorId(connector.id);
 
       // Log provider state before connection attempt
       if (connector.id === 'metaMask') {
@@ -121,6 +123,8 @@ export function WalletConnect() {
       }
 
       setErrorMessage(errorMsg);
+    } finally {
+      setPendingConnectorId(null);
     }
   }
 
@@ -129,11 +133,14 @@ export function WalletConnect() {
     try {
       const metaMaskConnector = metaMask();
       console.log('Using direct MetaMask connector:', metaMaskConnector);
+      setPendingConnectorId('metaMask');
       await connect({ connector: metaMaskConnector });
       setIsModalOpen(false);
     } catch (err: any) {
       console.error('MetaMask connection error:', err);
       setErrorMessage(err.message || 'Failed to connect to MetaMask');
+    } finally {
+      setPendingConnectorId(null);
     }
   };
 
@@ -200,7 +207,7 @@ export function WalletConnect() {
                   >
                     {connector.name}
                     {!isReady && ' (unsupported)'}
-                    {isPending && connector.uid === pendingConnector?.uid && ' (connecting...)'}
+                    {isPending && connector.id === pendingConnectorId && ' (connecting...)'}
                   </button>
                 );
               })}

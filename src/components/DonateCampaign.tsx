@@ -3,27 +3,6 @@ import { useWallet } from '../web3/hooks/useWallet'
 import { useSendTransaction, useWaitForTransactionReceipt } from 'wagmi'
 import { parseEther } from 'viem'
 
-// Campaign ABI - only the functions we need
-const campaignAbi = [
-  {
-    "stateMutability": "payable",
-    "type": "receive"
-  },
-  {
-    "inputs": [],
-    "name": "fundingActive",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  }
-]
-
 interface DonateCampaignProps {
   campaignAddress: string
 }
@@ -37,8 +16,7 @@ export function DonateCampaign({ campaignAddress }: DonateCampaignProps) {
   
   // Wait for transaction receipt
   const { isLoading: isConfirming, isSuccess, error: receiptError } = useWaitForTransactionReceipt({
-    hash,
-    enabled: !!hash
+    hash
   })
   
   // Combined states
@@ -47,9 +25,9 @@ export function DonateCampaign({ campaignAddress }: DonateCampaignProps) {
   const isError = !!error
   
   // Reset function for UI state
-  const [uiReset, setUiReset] = useState(0)
   const reset = () => {
-    setUiReset(prev => prev + 1)
+    // Force UI reset logic
+    window.location.reload()
   }
   
   // Handle the donation

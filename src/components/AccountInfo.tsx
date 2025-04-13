@@ -1,5 +1,4 @@
 import { useWallet } from '../web3/hooks/useWallet'
-import { sepolia } from 'wagmi/chains'
 
 export function AccountInfo() {
   const { isConnected, displayName, balance, address, chainId, isSepoliaNetwork } = useWallet()

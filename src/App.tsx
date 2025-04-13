@@ -4,7 +4,6 @@ import { WalletConnect } from './components/WalletConnect'
 import { AccountInfo } from './components/AccountInfo'
 import { DeployContracts } from './components/DeployContracts'
 import { DonateCampaign } from './components/DonateCampaign'
-import { useWallet } from './web3/hooks/useWallet'
 
 function App() {
   const [currentNav, setCurrentNav] = useState('home');

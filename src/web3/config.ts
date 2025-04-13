@@ -1,6 +1,6 @@
 import { http, createConfig } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
-import { injected, metaMask, coinbaseWallet, walletConnect } from 'wagmi/connectors'
+import { injected, coinbaseWallet, walletConnect } from 'wagmi/connectors'
 
 // Detect if MetaMask is available
 const metaMaskInstalled = typeof window !== 'undefined' &&

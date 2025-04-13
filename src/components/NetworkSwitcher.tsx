@@ -1,15 +1,24 @@
+import { useState } from 'react'
 import { useAccount, useChainId, useSwitchChain } from 'wagmi'
 import { sepolia } from 'wagmi/chains'
 
 export function NetworkSwitcher() {
   const chainId = useChainId()
-  const { switchChain, isLoading } = useSwitchChain()
+  const { switchChain } = useSwitchChain()
   const { isConnected } = useAccount()
+  const [isLoading, setIsLoading] = useState(false)
 
   const isCorrectNetwork = chainId === sepolia.id
 
-  const handleSwitchNetwork = () => {
-    switchChain({ chainId: sepolia.id })
+  const handleSwitchNetwork = async () => {
+    try {
+      setIsLoading(true)
+      await switchChain({ chainId: sepolia.id })
+    } catch (error) {
+      console.error('Error switching chain:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   if (!isConnected) {

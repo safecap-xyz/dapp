@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useAccount, useBalance } from 'wagmi'
-import { formatEther } from '../utils'
 
 /**
  * Hook to fetch the balance of a token for the connected account
@@ -13,8 +12,7 @@ export function useTokenBalance(tokenAddress?: `0x${string}`) {
   
   const { data: balanceData, isLoading, refetch } = useBalance({
     address,
-    token: tokenAddress,
-    enabled: isConnected && !!address,
+    token: tokenAddress
   })
 
   useEffect(() => {
