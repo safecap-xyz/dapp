@@ -102,7 +102,7 @@ export function useTransaction() {
           abi,
           address,
           functionName,
-          args,
+          args: args || [],
           value,
         })
       } catch (error) {
