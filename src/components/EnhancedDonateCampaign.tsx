@@ -19,25 +19,16 @@ export function EnhancedDonateCampaign({ campaignAddress }: EnhancedDonateCampai
   const [transactionStatus, setTransactionStatus] = useState<string | null>(null);
   
   // Prepare transaction call
-  const prepareDonationCall = async () => {
-    // Return a call object for the transaction
-    return [{
+  // Instead of using a function that returns a promise, we'll use a direct array
+  const donationCall = [
+    {
       to: campaignAddress as `0x${string}`,
       value: parseEther(donationAmount),
-      data: '0x' // No data for simple ETH transfer
-    }];
-  };
+      data: '0x' as `0x${string}` // Cast to the correct type
+    }
+  ];
   
-  // Define types for status and response
-  type TransactionStatus = {
-    statusName: string;
-    [key: string]: any;
-  };
-  
-  type TransactionResponse = {
-    hash: string;
-    [key: string]: any;
-  };
+  // We'll remove custom type definitions to avoid conflicts
 
   return (
     <div className="my-4 p-6 border rounded-lg shadow-neon bg-neutral-light/10 glass-panel">
@@ -76,15 +67,19 @@ export function EnhancedDonateCampaign({ campaignAddress }: EnhancedDonateCampai
           </div>
           
           <Transaction
-            calls={prepareDonationCall}
-            onStatus={(status: TransactionStatus) => {
+            calls={donationCall}
+            onStatus={(status) => {
               console.log('Transaction status:', status);
-              setTransactionStatus(status.statusName);
+              // Check if statusName exists before using it
+              if (status && typeof status === 'object' && 'statusName' in status) {
+                setTransactionStatus(status.statusName as string);
+              }
             }}
-            onSuccess={(response: TransactionResponse) => {
-              console.log('Transaction successful:', response);
+            onSuccess={() => {
+              console.log('Transaction successful');
+              setTransactionStatus('success');
             }}
-            onError={(error: Error) => {
+            onError={(error) => {
               console.error('Transaction error:', error);
             }}
           >

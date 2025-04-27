@@ -1,19 +1,34 @@
 import { ReactNode } from 'react';
 import { OnchainKitProvider as BaseOnchainKitProvider } from '@coinbase/onchainkit';
-import { sepolia } from 'wagmi/chains';
 
 interface OnchainKitProviderProps {
   children: ReactNode;
 }
 
 export function OnchainKitProvider({ children }: OnchainKitProviderProps) {
-  // Default to sepolia for development
-  const defaultChain = sepolia;
+  // Define a compatible chain object for Sepolia
+  const sepoliaChain = {
+    id: 11155111,
+    name: 'Sepolia',
+    nativeCurrency: {
+      name: 'Sepolia Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://sepolia.infura.io/v3/'],
+      },
+      public: {
+        http: ['https://sepolia.infura.io/v3/'],
+      },
+    },
+  };
 
   return (
     <BaseOnchainKitProvider
-      apiKey={import.meta.env.VITE_ONCHAINKIT_API_KEY}
-      chain={defaultChain}
+      apiKey={import.meta.env.VITE_ONCHAINKIT_API_KEY || ''}
+      chain={sepoliaChain}
       config={{
         appearance: {
           name: "SafeCap",

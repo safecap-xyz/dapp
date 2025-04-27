@@ -150,7 +150,7 @@ export function EnhancedDeployContracts() {
                 <div className="w-full bg-primary-dark/50 rounded-full h-2.5 mb-4">
                   <div 
                     className="bg-secondary-main h-2.5 rounded-full"
-                    style={{ width: `${Math.min(((step as number) / 5) * 100, 100)}%` }}
+                    style={{ width: `${Math.min((Number(step) / 5) * 100, 100)}%` }}
                   ></div>
                 </div>
                 
@@ -165,15 +165,15 @@ export function EnhancedDeployContracts() {
             </div>
           ) : (
             <Transaction
-              onStatus={(status: { statusName: string; [key: string]: any }) => {
+              onStatus={(status) => {
                 console.log('Transaction status:', status);
               }}
-              onSuccess={(response: { hash: string; [key: string]: any }) => {
-                console.log('Transaction successful:', response);
+              onSuccess={() => {
+                console.log('Transaction successful');
                 // We'll still use our custom deployment service
                 deployContracts();
               }}
-              onError={(error: Error) => {
+              onError={(error) => {
                 console.error('Transaction error:', error);
               }}
             >
