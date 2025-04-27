@@ -12,12 +12,19 @@ export function DeployContracts() {
     isError,
     factoryAddress,
     nftAddress,
-    sampleCampaignAddress,
+    campaignAddress,
     error,
     step,
     deployContracts,
     reset
   } = useContractDeployment()
+
+  // Campaign form state
+  const [showForm, setShowForm] = useState(false)
+  const [campaignName, setCampaignName] = useState('')
+  const [fundingGoal, setFundingGoal] = useState('1.0')
+  const [campaignDescription, setCampaignDescription] = useState('')
+  const [campaignDuration, setCampaignDuration] = useState('30')
 
   const [copied, setCopied] = useState<{[key: string]: boolean}>({})
 
@@ -39,8 +46,8 @@ export function DeployContracts() {
         return 'Deploying final factory contract...'
       case DeploymentStep.UpdatingNFT:
         return 'Updating NFT contract to point to final factory...'
-      case DeploymentStep.CreatingSampleCampaign:
-        return 'Creating a sample campaign...'
+      case DeploymentStep.CreatingCampaign:
+        return 'Creating your campaign...'
       case DeploymentStep.Completed:
         return 'Deployment completed successfully!'
       default:
@@ -64,23 +71,105 @@ export function DeployContracts() {
 
       {!isDeploying && !isSuccess && !isError && (
         <div>
-          <p className="text-text-primary mb-4">Deploy the SafeCap contracts to Sepolia testnet.</p>
-          <p className="text-sm text-secondary-light mb-4">
-            This will deploy three contracts: a CampaignFactory, a CampaignNFT,
-            and a sample Campaign. The process requires multiple transactions and
-            can take a few minutes to complete.
-          </p>
-          <button
-            onClick={deployContracts}
-            className="px-4 py-2 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon"
-            disabled={isDeploying || !isSepoliaNetwork}
-          >
-            Deploy Contracts
-          </button>
-          {!isSepoliaNetwork && (
-            <p className="mt-2 text-sm text-error-main">
-              Please switch to the Sepolia network using the network switcher above before deploying.
-            </p>
+          {!showForm ? (
+            <div>
+              <p className="text-text-primary mb-4">Create a new fundraising campaign on the blockchain.</p>
+              <p className="text-sm text-secondary-light mb-4">
+                This will deploy your campaign to the blockchain, allowing others to contribute funds.
+                The process requires multiple transactions and can take a few minutes to complete.
+              </p>
+              <button
+                onClick={() => setShowForm(true)}
+                className="px-4 py-2 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon"
+                disabled={!isSepoliaNetwork}
+              >
+                Create New Campaign
+              </button>
+              {!isSepoliaNetwork && (
+                <p className="mt-2 text-sm text-error-main">
+                  Please switch to the Sepolia network using the network switcher above before creating a campaign.
+                </p>
+              )}
+            </div>
+          ) : (
+            <div>
+              <h3 className="text-lg font-bold text-text-primary mb-4 font-secondary">Campaign Details</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-text-primary font-primary mb-2">Campaign Name</label>
+                  <input 
+                    className="w-full px-3 py-2 border border-secondary-main/30 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-main/50 bg-primary-dark/30 text-text-primary font-primary" 
+                    placeholder="Enter campaign name" 
+                    type="text"
+                    value={campaignName}
+                    onChange={(e) => setCampaignName(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-text-primary font-primary mb-2">Funding Goal (ETH)</label>
+                  <input 
+                    min="0.1" 
+                    step="0.1" 
+                    className="w-full px-3 py-2 border border-secondary-main/30 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-main/50 bg-primary-dark/30 text-text-primary font-primary" 
+                    placeholder="1.0" 
+                    type="number"
+                    value={fundingGoal}
+                    onChange={(e) => setFundingGoal(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-text-primary font-primary mb-2">Campaign Description</label>
+                  <textarea 
+                    className="w-full px-3 py-2 border border-secondary-main/30 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-main/50 bg-primary-dark/30 text-text-primary font-primary h-32" 
+                    placeholder="Describe your campaign"
+                    value={campaignDescription}
+                    onChange={(e) => setCampaignDescription(e.target.value)}
+                  ></textarea>
+                </div>
+                
+                <div>
+                  <label className="block text-text-primary font-primary mb-2">Campaign Duration (days)</label>
+                  <input 
+                    min="1" 
+                    max="90" 
+                    className="w-full px-3 py-2 border border-secondary-main/30 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-main/50 bg-primary-dark/30 text-text-primary font-primary" 
+                    placeholder="30" 
+                    type="number"
+                    value={campaignDuration}
+                    onChange={(e) => setCampaignDuration(e.target.value)}
+                  />
+                </div>
+                
+                <div className="pt-4 flex space-x-4">
+                  <button
+                    onClick={() => setShowForm(false)}
+                    className="px-4 py-3 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-primary-dark text-text-primary hover:bg-primary-light border border-secondary-main/30"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      // Pass the form data to deployContracts
+                      deployContracts({
+                        name: campaignName,
+                        description: campaignDescription,
+                        goal: fundingGoal,
+                        duration: campaignDuration
+                      });
+                    }}
+                    className="flex-1 px-4 py-3 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon"
+                    disabled={!campaignName || !fundingGoal || !campaignDescription || !campaignDuration}
+                  >
+                    Create Campaign
+                  </button>
+                </div>
+                <p className="text-xs text-text-secondary mt-2 text-center">
+                  All campaign details will be stored on-chain for transparency and accessibility.
+                </p>
+              </div>
+            </div>
           )}
         </div>
       )}
@@ -123,11 +212,11 @@ export function DeployContracts() {
                 <span>Updating NFT contract</span>
               </div>
 
-              <div className={`flex items-center ${step === DeploymentStep.CreatingSampleCampaign || step > DeploymentStep.CreatingSampleCampaign ? 'text-blue-600' : 'text-gray-400'}`}>
-                <div className={`w-5 h-5 rounded-full mr-2 flex items-center justify-center ${step > DeploymentStep.CreatingSampleCampaign ? 'bg-green-100 text-green-600' : 'bg-blue-100'}`}>
-                  {step > DeploymentStep.CreatingSampleCampaign ? '✓' : '5'}
+              <div className={`flex items-center ${step === DeploymentStep.CreatingCampaign || step > DeploymentStep.CreatingCampaign ? 'text-blue-600' : 'text-gray-400'}`}>
+                <div className={`w-5 h-5 rounded-full mr-2 flex items-center justify-center ${step > DeploymentStep.CreatingCampaign ? 'bg-green-100 text-green-600' : 'bg-blue-100'}`}>
+                  {step > DeploymentStep.CreatingCampaign ? '✓' : '5'}
                 </div>
-                <span>Creating sample campaign</span>
+                <span>Creating campaign</span>
               </div>
             </div>
           </div>
@@ -138,7 +227,7 @@ export function DeployContracts() {
 
       {isSuccess && (
         <div className="p-4 bg-success-main/20 rounded-lg border border-success-main/30">
-          <h3 className="text-xl font-bold text-success-main mb-4 font-secondary">Deployment Successful!</h3>
+          <h3 className="text-xl font-bold text-success-main mb-4 font-secondary">Campaign Created Successfully!</h3>
           
           <div className="space-y-4">
             <div className="p-3 bg-primary-dark/30 rounded border border-secondary-main/30">
@@ -173,11 +262,11 @@ export function DeployContracts() {
             
             <div className="p-3 bg-primary-dark/30 rounded border border-secondary-main/30">
               <div className="flex justify-between items-center mb-2">
-                <span className="font-medium font-primary text-text-primary">Sample Campaign:</span>
+                <span className="font-medium font-primary text-text-primary">Campaign Contract:</span>
                 <div className="flex items-center">
-                  <span className="font-mono text-sm mr-2 text-secondary-light">{sampleCampaignAddress}</span>
+                  <span className="font-mono text-sm mr-2 text-secondary-light">{campaignAddress}</span>
                   <button 
-                    onClick={() => copyToClipboard(sampleCampaignAddress || '', 'campaign')}
+                    onClick={() => copyToClipboard(campaignAddress || '', 'campaign')}
                     className="text-secondary-main hover:text-secondary-light transition-colors"
                   >
                     {copied['campaign'] ? '✓' : 'Copy'}
@@ -187,13 +276,27 @@ export function DeployContracts() {
             </div>
           </div>
           
-          <div className="mt-6">
-            <button
-              onClick={reset}
-              className="px-4 py-2 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon"
-            >
-              Deploy Again
-            </button>
+          <div className="mt-6 flex flex-col space-y-4">
+            <div className="p-3 bg-primary-dark/30 rounded border border-secondary-main/30">
+              <h4 className="font-medium font-primary text-text-primary mb-2">Campaign Details</h4>
+              <div className="space-y-2 text-sm text-secondary-light">
+                <p><span className="text-text-primary">Name:</span> {campaignName}</p>
+                <p><span className="text-text-primary">Goal:</span> {fundingGoal} ETH</p>
+                <p><span className="text-text-primary">Duration:</span> {campaignDuration} days</p>
+                <div>
+                  <p className="text-text-primary mb-1">Description:</p>
+                  <p className="text-xs">{campaignDescription}</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex space-x-4">
+              <button
+                onClick={reset}
+                className="flex-1 px-4 py-2 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon"
+              >
+                Create Another Campaign
+              </button>
+            </div>
           </div>
         </div>
       )}

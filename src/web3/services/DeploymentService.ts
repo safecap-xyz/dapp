@@ -20,7 +20,7 @@ export interface DeploymentState {
   isError: boolean
   factoryAddress?: Address
   nftAddress?: Address
-  sampleCampaignAddress?: Address
+  campaignAddress?: Address
   error: Error | null
   txHashes: Hash[]
   step: DeploymentStep
@@ -32,7 +32,7 @@ export enum DeploymentStep {
   DeployingNFT = 'DEPLOYING_NFT',
   DeployingFinalFactory = 'DEPLOYING_FINAL_FACTORY',
   UpdatingNFT = 'UPDATING_NFT',
-  CreatingSampleCampaign = 'CREATING_SAMPLE_CAMPAIGN',
+  CreatingCampaign = 'CREATING_CAMPAIGN',
   Completed = 'COMPLETED'
 }
 
@@ -42,10 +42,17 @@ const initialState: DeploymentState = {
   isError: false,
   factoryAddress: undefined,
   nftAddress: undefined,
-  sampleCampaignAddress: undefined,
+  campaignAddress: undefined,
   error: null,
   txHashes: [],
   step: DeploymentStep.NotStarted
+}
+
+export interface CampaignDetails {
+  name: string;
+  description: string;
+  goal: string; // in ETH
+  duration: string; // in days
 }
 
 /**
@@ -56,7 +63,7 @@ export function useContractDeployment() {
   const { data: walletClient } = useWalletClient()
   const publicClient = usePublicClient()
 
-  const deployContracts = useCallback(async () => {
+  const deployContracts = useCallback(async (campaignDetails?: CampaignDetails) => {
     if (!walletClient || !publicClient) {
       setDeployState({
         ...initialState,
@@ -172,29 +179,44 @@ export function useContractDeployment() {
         hash: updateTxHash
       })
 
-      // Create a sample campaign for testing
+      // Create the campaign with user-provided details
       setDeployState(prev => ({
         ...prev,
         txHashes: [...prev.txHashes, updateTxHash],
-        step: DeploymentStep.CreatingSampleCampaign
+        step: DeploymentStep.CreatingCampaign
       }))
 
-      const goal = BigInt(100000000000000000) // 0.1 ETH
-      const token = '0x0000000000000000000000000000000000000000' // Using ETH for this sample
-      const campaignURI = 'ipfs://QmSampleCID' // Example IPFS URI for campaign metadata
+      // Convert ETH to Wei (1 ETH = 10^18 Wei)
+      const goalInEth = campaignDetails?.goal || '0.1';
+      const goalInWei = BigInt(Math.floor(parseFloat(goalInEth) * 1e18));
+      
+      const token = '0x0000000000000000000000000000000000000000' // Using ETH
+      
+      // Create a metadata object with all campaign details
+      const metadata = {
+        name: campaignDetails?.name || 'Sample Campaign',
+        description: campaignDetails?.description || 'A sample fundraising campaign',
+        duration: campaignDetails?.duration || '30', // days
+        createdAt: new Date().toISOString()
+      };
+      
+      // Encode the metadata as a JSON string and use it as the campaign URI
+      // In a production app, you'd likely store this in IPFS
+      const campaignURI = `data:application/json,${encodeURIComponent(JSON.stringify(metadata))}`
 
-      console.log("Creating a sample campaign with params:", {
+      console.log("Creating a campaign with params:", {
         creator: account,
-        goal: goal.toString(),
+        goal: goalInWei.toString(),
         token,
-        campaignURI
+        campaignURI,
+        metadata
       });
 
       const createCampaignTxHash = await walletClient.writeContract({
         address: finalFactoryAddress,
         abi: CampaignFactoryABI,
         functionName: 'createCampaign',
-        args: [account, goal, token, campaignURI]
+        args: [account, goalInWei, token, campaignURI]
       })
 
       console.log("Campaign creation transaction sent:", createCampaignTxHash);
@@ -212,7 +234,7 @@ export function useContractDeployment() {
       console.log("Total logs found:", createCampaignReceipt.logs.length);
       
       // Directly extract all the data from the log
-      let sampleCampaignAddress: Address | undefined;
+      let campaignAddress: Address | undefined;
       
       if (createCampaignReceipt.logs && createCampaignReceipt.logs.length > 0) {
         // Get the raw log data
@@ -228,13 +250,13 @@ export function useContractDeployment() {
           
           // Verify this looks like a valid address (not zero address)
           if (extractedAddr !== '0x0000000000000000000000000000000000000000') {
-            sampleCampaignAddress = extractedAddr;
-            console.log("Extracted campaign address from third topic:", sampleCampaignAddress);
+            campaignAddress = extractedAddr;
+            console.log("Extracted campaign address from third topic:", campaignAddress);
           }
         }
         
         // SECOND: If that failed, try other topics
-        if (!sampleCampaignAddress && log.topics && log.topics.length > 0) {
+        if (!campaignAddress && log.topics && log.topics.length > 0) {
           console.log("Looking for addresses in other topics");
           for (const topic of log.topics) {
             // Extract the last 40 characters which could be an address
@@ -242,14 +264,14 @@ export function useContractDeployment() {
             if (potentialAddress !== '0x0000000000000000000000000000000000000000' &&
                 potentialAddress !== '0x0000000000000000000000000000000000000001') {
               console.log("Found potential address in topic:", potentialAddress);
-              sampleCampaignAddress = potentialAddress as Address;
+              campaignAddress = potentialAddress as Address;
               break;
             }
           }
         }
         
         // LAST RESORT: If we still don't have an address, try the data field
-        if (!sampleCampaignAddress && log.data && log.data.length > 66) {
+        if (!campaignAddress && log.data && log.data.length > 66) {
           console.log("Looking for addresses in log data");
           const data = log.data;
           
@@ -259,7 +281,7 @@ export function useContractDeployment() {
             if (potentialAddress !== '0x0000000000000000000000000000000000000000' &&
                 potentialAddress !== '0x0000000000000000000000000000000000000001') {
               console.log("Found potential address in data:", potentialAddress);
-              sampleCampaignAddress = potentialAddress as Address;
+              campaignAddress = potentialAddress as Address;
               break;
             }
           }
@@ -267,17 +289,17 @@ export function useContractDeployment() {
       }
       
       // Extra validation for the found address
-      if (sampleCampaignAddress) {
+      if (campaignAddress) {
         // Make sure it's not the factory or NFT address (that would be wrong)
-        if (sampleCampaignAddress === finalFactoryAddress || sampleCampaignAddress === nftAddress) {
+        if (campaignAddress === finalFactoryAddress || campaignAddress === nftAddress) {
           console.log("Warning: Found address matches factory or NFT, likely incorrect");
-          sampleCampaignAddress = undefined;
+          campaignAddress = undefined;
         }
         
         // Warn about suspicious addresses
-        if (sampleCampaignAddress === '0x0000000000000000000000000000000000000001') {
+        if (campaignAddress === '0x0000000000000000000000000000000000000001') {
           console.log("Warning: Found suspicious address 0x01, likely invalid");
-          sampleCampaignAddress = undefined;
+          campaignAddress = undefined;
         }
       }
 
@@ -286,7 +308,7 @@ export function useContractDeployment() {
         ...prev,
         isDeploying: false,
         isSuccess: true,
-        sampleCampaignAddress,
+        campaignAddress,
         txHashes: [...prev.txHashes, createCampaignTxHash],
         step: DeploymentStep.Completed
       }))
@@ -294,7 +316,7 @@ export function useContractDeployment() {
       return {
         factoryAddress: finalFactoryAddress,
         nftAddress,
-        sampleCampaignAddress
+        campaignAddress
       }
     } catch (error) {
       console.error('Deployment error:', error)
