@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
-import { ConnectButton } from '@coinbase/onchainkit';
+import { useAccount, useConnect } from 'wagmi';
 
 interface CreateCampaignProps {
   onSuccess?: (campaignAddress: string) => void;
@@ -18,7 +17,8 @@ export function EnhancedCreateCampaign({ onSuccess }: CreateCampaignProps) {
   // Get account information from wagmi
   const { address, isConnected } = useAccount();
   
-  // No need for additional hooks here
+  // Get the connect function from wagmi
+  const { connect, connectors } = useConnect();
   
   // Function to create a campaign with CDP wallet
   const createCampaignWithCDP = async () => {
@@ -166,12 +166,23 @@ export function EnhancedCreateCampaign({ onSuccess }: CreateCampaignProps) {
         </div>
       )}
       
-      {/* CDP Connect Button */}
+      {/* Connect Wallet Button */}
       {!isConnected && !managedWalletAddress && (
         <div className="mt-6 text-center">
           <p className="mb-4 text-text-secondary font-primary">You can also connect your own wallet:</p>
           <div className="flex justify-center">
-            <ConnectButton label="Connect Your Wallet" />
+            <button 
+              onClick={() => {
+                // Find the first available connector (usually MetaMask or WalletConnect)
+                const connector = connectors[0];
+                if (connector) {
+                  connect({ connector });
+                }
+              }}
+              className="px-4 py-2 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-accent-main text-accent-contrast hover:bg-accent-light shadow-neon"
+            >
+              Connect Your Wallet
+            </button>
           </div>
           <p className="mt-4 text-xs text-text-secondary font-primary">Using your own wallet gives you direct control over your campaign funds.</p>
         </div>

@@ -327,6 +327,34 @@ label {
   font-weight: 500;
 }
 
+/* Utility classes for our futuristic theme */
+.glow-text {
+  text-shadow: 0 0 10px var(--color-secondary-main), 0 0 20px var(--color-secondary-main), 0 0 30px var(--color-secondary-main);
+}
+
+/* Enhanced glass-panel styling with subtle background color and blur */
+.glass-panel {
+  background-color: rgba(11, 14, 45, 0.7); /* Slightly darker than primary-main with opacity */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* For Safari */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 194, 255, 0.2); /* Subtle secondary color border */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add subtle inner highlight to glass panels */
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 194, 255, 0.3), transparent);
+  pointer-events: none;
+}
+
 /* Utility classes */
 .text-primary { color: var(--color-primary-main); }
 .text-secondary { color: var(--color-secondary-main); }
