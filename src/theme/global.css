@@ -1,22 +1,24 @@
-/* Import Faustina font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Faustina:wght@300;400;500;600;700;800&display=swap');
+/* Import fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
 
 /* Global CSS variables based on our theme */
 :root {
   /* Colors */
-  --color-primary-main: #001862;
-  --color-primary-light: #1a3a8f;
-  --color-primary-dark: #00104d;
+  --color-primary-main: #0A2463;
+  --color-primary-light: #3E5C97;
+  --color-primary-dark: #041542;
   --color-primary-contrast: #ffffff;
   
-  --color-secondary-main: #3366cc;
-  --color-secondary-light: #5c85d6;
-  --color-secondary-dark: #254aa3;
+  --color-secondary-main: #1E88E5;
+  --color-secondary-light: #6AB7FF;
+  --color-secondary-dark: #005CB2;
   --color-secondary-contrast: #ffffff;
   
-  --color-accent-main: #ffb300;
-  --color-accent-light: #ffcc4d;
-  --color-accent-dark: #cc8f00;
+  --color-accent-main: #FFD166;
+  --color-accent-light: #FFDD8C;
+  --color-accent-dark: #E5B93D;
   --color-accent-contrast: #000000;
   
   --color-success-main: #4caf50;
@@ -33,7 +35,9 @@
   --color-text-disabled: #9e9e9e;
   
   /* Typography */
-  --font-family-primary: 'Faustina', serif;
+  --font-family-primary: 'Montserrat', sans-serif;
+  --font-family-secondary: 'Playfair Display', serif;
+  --font-family-mono: 'Fira Code', monospace;
   --font-family-system: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   
   /* Spacing */
@@ -63,14 +67,33 @@ body {
   margin: 0;
   padding: 0;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: #f5f5f5;
+    --color-text-secondary: #b0b0b0;
+    --color-neutral-main: #121212;
+    --color-neutral-light: #1e1e1e;
+    --color-neutral-dark: #0a0a0a;
+  }
+  
+  body {
+    background-color: var(--color-neutral-main);
+    color: var(--color-text-primary);
+  }
 }
 
 /* Typography styles */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-family-primary);
+  font-family: var(--font-family-secondary);
   margin-top: 0;
   font-weight: 700;
   color: var(--color-text-primary);
+  letter-spacing: -0.025em;
 }
 
 h1 {
@@ -109,12 +132,15 @@ a:hover {
 button, 
 .button {
   font-family: var(--font-family-primary);
-  font-weight: 500;
+  font-weight: 600;
   border-radius: var(--border-radius-md);
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1.25rem;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.875rem;
 }
 
 .button-primary {
@@ -162,6 +188,19 @@ button,
   box-shadow: var(--shadow-md);
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
 }
 
 /* Form styles */
@@ -170,11 +209,21 @@ select,
 textarea {
   font-family: var(--font-family-primary);
   font-size: 1rem;
-  padding: 0.5rem;
+  padding: 0.75rem 1rem;
   border: 1px solid var(--color-neutral-dark);
   border-radius: var(--border-radius-md);
   width: 100%;
   box-sizing: border-box;
+  background-color: var(--color-neutral-light);
+  color: var(--color-text-primary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  input, select, textarea {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 input:focus, 
@@ -201,6 +250,11 @@ label {
 .text-light { color: var(--color-neutral-light); }
 .text-dark { color: var(--color-text-primary); }
 .text-muted { color: var(--color-text-secondary); }
+
+/* Font family utility classes */
+.font-primary { font-family: var(--font-family-primary); }
+.font-secondary { font-family: var(--font-family-secondary); }
+.font-mono { font-family: var(--font-family-mono); }
 
 .bg-primary { background-color: var(--color-primary-main); }
 .bg-secondary { background-color: var(--color-secondary-main); }
@@ -249,4 +303,53 @@ label {
 
 .bg-accent *, .bg-light * {
   color: var(--color-text-primary);
+}
+
+/* Code blocks */
+code, pre {
+  font-family: var(--font-family-mono);
+  font-size: 0.9em;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 0.2em 0.4em;
+  border-radius: var(--border-radius-sm);
+}
+
+pre {
+  padding: 1rem;
+  overflow-x: auto;
+  line-height: 1.45;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  code, pre {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Section spacing */
+.section {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
 }

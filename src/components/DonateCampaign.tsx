@@ -64,27 +64,27 @@ export function DonateCampaign({ campaignAddress }: DonateCampaignProps) {
 
   if (!isConnected) {
     return (
-      <div className="my-4 p-6 border rounded-lg shadow-sm bg-gray-50">
-        <h2 className="text-xl font-semibold mb-4">Donate to Campaign</h2>
-        <p className="mb-4">Please connect your wallet to make a donation.</p>
+      <div className="my-4 p-6 border rounded-lg shadow-md bg-neutral-light">
+        <h2 className="text-xl font-secondary font-semibold mb-4 text-primary-dark">Donate to Campaign</h2>
+        <p className="mb-4 font-primary text-text-secondary">Please connect your wallet to make a donation.</p>
       </div>
     )
   }
 
   return (
-    <div className="my-4 p-6 border rounded-lg shadow-sm bg-gray-50">
-      <h2 className="text-xl font-semibold mb-4">Donate to Test Campaign</h2>
+    <div className="my-4 p-6 border rounded-lg shadow-md bg-neutral-light">
+      <h2 className="text-xl font-secondary font-semibold mb-4 text-primary-dark">Donate to Test Campaign</h2>
 
       {!isLoading && !isSuccess && !isError && (
         <div>
-          <p className="mb-4">Send a test donation to our sample campaign on Sepolia testnet.</p>
-          <p className="mb-4 text-sm text-gray-600">
+          <p className="mb-4 font-primary">Send a test donation to our sample campaign on Sepolia testnet.</p>
+          <p className="mb-4 text-sm text-text-secondary font-primary">
             This will send a small amount of test ETH to the campaign contract at address: 
-            <code className="bg-gray-100 p-1 rounded">{campaignAddress}</code>
+            <code className="bg-neutral-dark p-1 rounded font-mono">{campaignAddress}</code>
           </p>
 
           <div className="mb-4">
-            <label htmlFor="donationAmount" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="donationAmount" className="block text-sm font-medium text-primary-dark mb-1 font-primary">
               Donation Amount (ETH)
             </label>
             <input
@@ -92,20 +92,20 @@ export function DonateCampaign({ campaignAddress }: DonateCampaignProps) {
               id="donationAmount"
               value={donationAmount}
               onChange={(e) => setDonationAmount(e.target.value)}
-              className="px-3 py-2 border rounded w-full max-w-xs"
+              className="px-3 py-2 border border-neutral-dark rounded w-full max-w-xs font-primary focus:border-secondary-main focus:ring-1 focus:ring-secondary-light outline-none transition-all"
             />
           </div>
 
           <button
             onClick={handleDonate}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-secondary-main text-secondary-contrast rounded font-primary font-medium hover:bg-secondary-dark transition-colors"
             disabled={isLoading || !isSepoliaNetwork}
           >
             {isLoading ? 'Processing...' : 'Donate Now'}
           </button>
           
           {!isSepoliaNetwork && (
-            <p className="mt-2 text-sm text-orange-600">
+            <p className="mt-2 text-sm text-warning-main font-primary">
               Please switch to the Sepolia network before donating.
             </p>
           )}
@@ -115,31 +115,31 @@ export function DonateCampaign({ campaignAddress }: DonateCampaignProps) {
       {isLoading && (
         <div>
           <div className="flex items-center mb-4">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-700 mr-3"></div>
-            <p>Processing your donation...</p>
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-secondary-main mr-3"></div>
+            <p className="font-primary">Processing your donation...</p>
           </div>
-          <p className="text-sm text-gray-600">Please keep this window open and confirm the transaction in your wallet if prompted.</p>
+          <p className="text-sm text-text-secondary font-primary">Please keep this window open and confirm the transaction in your wallet if prompted.</p>
         </div>
       )}
 
       {isSuccess && (
         <div>
-          <div className="flex items-center mb-4 text-green-600">
+          <div className="flex items-center mb-4 text-success-main">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            <p className="font-semibold">Donation Successful!</p>
+            <p className="font-semibold font-primary">Donation Successful!</p>
           </div>
           
-          <p className="mb-4">Your donation of {donationAmount} ETH has been sent to the campaign.</p>
+          <p className="mb-4 font-primary">Your donation of {donationAmount} ETH has been sent to the campaign.</p>
           
-          <div className="text-sm text-gray-600 mb-4">
+          <div className="text-sm text-text-secondary mb-4 font-primary">
             <p>You should soon receive an NFT as a thank you for your donation. Check your wallet to see it.</p>
           </div>
 
           <button
             onClick={reset}
-            className="px-4 py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 transition-colors"
+            className="px-4 py-2 border border-secondary-main text-secondary-main rounded font-primary font-medium hover:bg-secondary-main/10 transition-colors"
           >
             Make Another Donation
           </button>
@@ -148,20 +148,20 @@ export function DonateCampaign({ campaignAddress }: DonateCampaignProps) {
 
       {isError && (
         <div>
-          <div className="flex items-center mb-4 text-red-600">
+          <div className="flex items-center mb-4 text-error-main">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p className="font-semibold">Donation Failed</p>
+            <p className="font-semibold font-primary">Donation Failed</p>
           </div>
 
-          <div className="bg-red-50 border border-red-200 rounded p-3 mb-4">
-            <p className="text-red-700">{error?.message || 'Unknown error occurred during donation'}</p>
+          <div className="bg-error-main/10 border border-error-main/20 rounded p-3 mb-4">
+            <p className="text-error-main font-primary">{error?.message || 'Unknown error occurred during donation'}</p>
           </div>
 
           <button
             onClick={reset}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-secondary-main text-secondary-contrast rounded font-primary font-medium hover:bg-secondary-dark transition-colors"
           >
             Try Again
           </button>

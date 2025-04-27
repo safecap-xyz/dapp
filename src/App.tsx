@@ -16,27 +16,27 @@ function App() {
     <>
       {/* Layout 1: Header-Content-Footer */}
       <div className="rounded-lg overflow-hidden">
-        <div className="bg-[#001862] h-16 text-white flex items-center justify-between px-4">
+        <div className="bg-primary-main h-16 text-primary-contrast flex items-center justify-between px-4 shadow-md">
           <div className="flex items-center">
-            <div className="font-bold text-xl">SafeCap</div>
-            <div className="ml-2 text-sm bg-yellow-600 text-white px-2 py-0.5 rounded-full">Sepolia Testnet</div>
+            <div className="font-secondary font-bold text-2xl">SafeCap</div>
+            <div className="ml-2 text-sm bg-accent-main text-accent-contrast px-2 py-0.5 rounded-full font-medium">Sepolia Testnet</div>
           </div>
           <div className="flex items-center space-x-6">
             <nav>
-              <ul className="flex space-x-6">
-                <li className={`cursor-pointer ${currentNav === 'home' ? 'border-b-2 border-white' : ''}`}
+              <ul className="flex space-x-6 font-primary font-medium">
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'home' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('home')}>
                   Home
                 </li>
-                <li className={`cursor-pointer ${currentNav === 'deploy' ? 'border-b-2 border-white' : ''}`}
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deploy' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('deploy')}>
                   Deploy
                 </li>
-                <li className={`cursor-pointer ${currentNav === 'donate' ? 'border-b-2 border-white' : ''}`}
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'donate' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('donate')}>
                   Donate
                 </li>
-                <li className={`cursor-pointer ${currentNav === 'about' ? 'border-b-2 border-white' : ''}`}
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'about' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('about')}>
                   About
                 </li>
@@ -51,8 +51,8 @@ function App() {
             <div className='content-main min-h-[900px]'>
               {currentNav === 'deploy' && (
                 <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4">Deploy Contracts on Sepolia Testnet</h2>
-                  <p className="mb-6">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</p>
+                  <h2 className="text-3xl font-secondary font-bold mb-4 text-primary-dark">Deploy Contracts on Sepolia Testnet</h2>
+                  <p className="mb-6 text-text-secondary font-primary">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</p>
 
                   <DeployContracts />
                 </div>
@@ -60,8 +60,8 @@ function App() {
               
               {currentNav === 'donate' && (
                 <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4">Donate to Test Campaign</h2>
-                  <p className="mb-6">Send a test donation to our sample campaign on the Sepolia testnet.</p>
+                  <h2 className="text-3xl font-secondary font-bold mb-4 text-primary-dark">Donate to Test Campaign</h2>
+                  <p className="mb-6 text-text-secondary font-primary">Send a test donation to our sample campaign on the Sepolia testnet.</p>
 
                   <DonateCampaign 
                     key="donate-campaign"
@@ -72,8 +72,8 @@ function App() {
 
               {currentNav === 'about' && (
                 <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4">About SafeCap</h2>
-                  <p className="mb-6">SafeCap is a decentralized crowdfunding platform built on blockchain technology that enables transparent, secure, and efficient fundraising for projects.</p>
+                  <h2 className="text-3xl font-secondary font-bold mb-4 text-primary-dark">About SafeCap</h2>
+                  <p className="mb-6 text-text-secondary font-primary">SafeCap is a decentralized crowdfunding platform built on blockchain technology that enables transparent, secure, and efficient fundraising for projects.</p>
 
                   <div className="mb-8">
                     <h3 className="text-xl font-bold mb-2">Your Wallet</h3>
@@ -87,41 +87,41 @@ function App() {
 
             <section className="content-full">
               <div className="content-full-inner">
-                <h2 className='text-[46px] font-faustina font-bold'>The Future of Crowd-funding is Here.</h2>
+                <h2 className='text-5xl font-secondary font-bold text-primary-contrast'>The Future of Crowd-funding is Here.</h2>
 
               </div>
             </section>
             <section className="content-full bg-none">
               <div className="content-full-inner">
-                <ul className="mt-6 space-y-4 text-left">
+                <ul className="mt-6 space-y-4 text-left font-primary">
                   <li className="flex items-start">
-                    <span className="mr-2 text-blue-400">•</span>
-                    <span>Raise Funds Your Way: Accept ETH & ERC20 donations.</span>
+                    <span className="mr-2 text-accent-main">•</span>
+                    <span className="text-primary-contrast">Raise Funds Your Way: Accept ETH & ERC20 donations.</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="mr-2 text-blue-400">•</span>
-                    <span>Reward Support with NFTs: Automatically mint unique digital collectibles for backers.</span>
+                    <span className="mr-2 text-accent-main">•</span>
+                    <span className="text-primary-contrast">Reward Support with NFTs: Automatically mint unique digital collectibles for backers.</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="mr-2 text-blue-400">•</span>
-                    <span>Transparent & Secure: Powered by audited smart contracts on the blockchain.</span>
+                    <span className="mr-2 text-accent-main">•</span>
+                    <span className="text-primary-contrast">Transparent & Secure: Powered by audited smart contracts on the blockchain.</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="mr-2 text-blue-400">•</span>
-                    <span>All-or-Nothing Funding: Creator receives funds only if the goal is met.</span>
+                    <span className="mr-2 text-accent-main">•</span>
+                    <span className="text-primary-contrast">All-or-Nothing Funding: Creator receives funds only if the goal is met.</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="mr-2 text-blue-400">•</span>
-                    <span>On-Chain Tracking: Verifiable progress and donation history.</span>
+                    <span className="mr-2 text-accent-main">•</span>
+                    <span className="text-primary-contrast">On-Chain Tracking: Verifiable progress and donation history.</span>
                   </li>
                 </ul>
               </div>
 
             </section>
         </div>
-        <div className="bg-[#001862] text-white text-center py-4">
+        <div className="bg-primary-main text-primary-contrast text-center py-4">
           <div className="container mx-auto">
-            <p>&copy; 2025 SafeCap.xyz. All rights reserved.</p>
+            <p className="font-primary">&copy; 2025 SafeCap.xyz. All rights reserved.</p>
           </div>
         </div>
       </div>

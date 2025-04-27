@@ -3,21 +3,21 @@ export const theme = {
   // Color palette
   colors: {
     primary: {
-      main: '#001862',      // Deep blue (header/footer background)
-      light: '#1a3a8f',
-      dark: '#00104d',
+      main: '#0A2463',      // Rich deep blue (header/footer background)
+      light: '#3E5C97',
+      dark: '#041542',
       contrast: '#ffffff',  // Text color on primary background
     },
     secondary: {
-      main: '#3366cc',      // Lighter blue for buttons, links
-      light: '#5c85d6',
-      dark: '#254aa3',
+      main: '#1E88E5',      // Vibrant blue for buttons, links
+      light: '#6AB7FF',
+      dark: '#005CB2',
       contrast: '#ffffff',  // Text color on secondary background
     },
     accent: {
-      main: '#ffb300',      // Yellow/gold for accents and highlights
-      light: '#ffcc4d',
-      dark: '#cc8f00',
+      main: '#FFD166',      // Vibrant gold for accents and highlights
+      light: '#FFDD8C',
+      dark: '#E5B93D',
       contrast: '#000000',  // Text color on accent background
     },
     success: {
@@ -55,7 +55,9 @@ export const theme = {
   // Typography
   typography: {
     fontFamily: {
-      primary: "'Faustina', serif",
+      primary: "'Montserrat', sans-serif",
+      secondary: "'Playfair Display', serif",
+      mono: "'Fira Code', monospace",
       system: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
     },
     fontWeight: {
@@ -132,17 +134,17 @@ export type Theme = typeof theme;
 // Helper functions to access theme values
 export const getColor = (colorPath: string): string => {
   const parts = colorPath.split('.');
-  let result: any = theme.colors;
+  let result: Record<string, unknown> = theme.colors;
   
   for (const part of parts) {
-    if (result[part] === undefined) {
+    if (typeof result !== 'object' || result === null || !(part in result)) {
       console.warn(`Color path "${colorPath}" not found in theme`);
       return '';
     }
-    result = result[part];
+    result = result[part] as Record<string, unknown>;
   }
   
-  return result;
+  return result as unknown as string;
 };
 
 export default theme;
