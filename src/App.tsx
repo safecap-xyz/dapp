@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { WalletConnect } from './components/WalletConnect'
 import { AccountInfo } from './components/AccountInfo'
 import { DeployContracts } from './components/DeployContracts'
-import { DonateCampaign } from './components/DonateCampaign'
+import { CampaignList } from './components/CampaignList'
 
 function App() {
   const [currentNav, setCurrentNav] = useState('home');
@@ -60,22 +60,7 @@ function App() {
               )}
               
               {currentNav === 'donate' && (
-                <div>
-                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Donate to Campaign</h1>
-                  <p className="mb-6 text-text-primary font-primary">Support campaigns by donating ETH. Connect your wallet to get started.</p>
-                  
-                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30 mb-8">
-                    <h3 className="text-xl font-secondary font-bold mb-4 text-text-primary">Your Wallet</h3>
-                    <div className="cyber-line w-full my-3"></div>
-                    <AccountInfo />
-                  </div>
-                  
-                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
-                    <h3 className="text-xl font-secondary font-bold mb-4 text-text-primary">Make a Donation</h3>
-                    <div className="cyber-line w-full my-3"></div>
-                    <DonateCampaign campaignAddress="0x1234567890123456789012345678901234567890" />
-                  </div>
-                </div>
+                <CampaignList />
               )}
 
               {currentNav === 'about' && (
