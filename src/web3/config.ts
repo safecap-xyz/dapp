@@ -25,7 +25,7 @@ export const config = createConfig({
     }),
     // Include walletConnect for mobile support
     walletConnect({
-      projectId: '545040454403ce59f4ca1790a9269b6b',
+      projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID,
       showQrModal: true,
       metadata: {
         name: 'SafeCap',

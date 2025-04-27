@@ -1,0 +1,241 @@
+/* Import futuristic fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
+
+/* Global CSS variables based on our futuristic theme */
+:root {
+  /* Colors */
+  --color-primary-main: #0B0E2D;
+  --color-primary-light: #1E2359;
+  --color-primary-dark: #050718;
+  --color-primary-contrast: #ffffff;
+  
+  --color-secondary-main: #00C2FF;
+  --color-secondary-light: #5EDFFF;
+  --color-secondary-dark: #0097C4;
+  --color-secondary-contrast: #000000;
+  
+  --color-accent-main: #FF00E4;
+  --color-accent-light: #FF5EEF;
+  --color-accent-dark: #B100A0;
+  --color-accent-contrast: #ffffff;
+  
+  --color-success-main: #00FF9D;
+  --color-warning-main: #FFB800;
+  --color-error-main: #FF3D71;
+  
+  --color-neutral-main: #121212;
+  --color-neutral-light: #1E1E1E;
+  --color-neutral-dark: #080808;
+  --color-neutral-contrast: #ffffff;
+  
+  --color-text-primary: #E0E0FF;
+  --color-text-secondary: #A0A0C0;
+  --color-text-disabled: #6A6A8A;
+  
+  /* Typography */
+  --font-family-primary: 'Rajdhani', sans-serif;
+  --font-family-secondary: 'Orbitron', sans-serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+  --font-family-system: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border radius */
+  --border-radius-sm: 0.125rem;
+  --border-radius-md: 0.25rem;
+  --border-radius-lg: 0.5rem;
+  --border-radius-xl: 1rem;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Transitions */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+  
+  /* Z-index */
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+}
+
+/* Base styles */
+body {
+  font-family: var(--font-family-primary);
+  background-color: var(--color-primary-dark);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-secondary);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+code, pre {
+  font-family: var(--font-family-mono);
+}
+
+/* Utility classes for our futuristic theme */
+.glow-text {
+  text-shadow: 0 0 10px var(--color-secondary-main), 0 0 20px var(--color-secondary-main), 0 0 30px var(--color-secondary-main);
+}
+
+.neon-border {
+  border: 1px solid var(--color-secondary-main);
+  box-shadow: 0 0 5px var(--color-secondary-main), 0 0 10px var(--color-secondary-main);
+}
+
+.shadow-neon {
+  box-shadow: 0 0 10px rgba(0, 194, 255, 0.5), 0 0 20px rgba(0, 194, 255, 0.3);
+}
+
+.shadow-neon-accent {
+  box-shadow: 0 0 10px rgba(255, 0, 228, 0.5), 0 0 20px rgba(255, 0, 228, 0.3);
+}
+
+/* Enhanced glass-panel styling with subtle background color and blur */
+.glass-panel {
+  background-color: rgba(11, 14, 45, 0.7); /* Slightly darker than primary-main with opacity */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* For Safari */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 194, 255, 0.2); /* Subtle secondary color border */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add subtle inner highlight to glass panels */
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 194, 255, 0.3), transparent);
+  pointer-events: none;
+}
+
+/* Cyber line separator */
+.cyber-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-secondary-main), transparent);
+  position: relative;
+  margin: var(--spacing-md) 0;
+}
+
+.cyber-line::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 3px;
+  background-color: var(--color-secondary-main);
+  box-shadow: 0 0 5px var(--color-secondary-main), 0 0 10px var(--color-secondary-main);
+}
+
+/* Tailwind-like utility classes */
+.font-primary { font-family: var(--font-family-primary); }
+.font-secondary { font-family: var(--font-family-secondary); }
+.font-mono { font-family: var(--font-family-mono); }
+
+.text-primary-main { color: var(--color-primary-main); }
+.text-primary-light { color: var(--color-primary-light); }
+.text-primary-dark { color: var(--color-primary-dark); }
+.text-primary-contrast { color: var(--color-primary-contrast); }
+
+.text-secondary-main { color: var(--color-secondary-main); }
+.text-secondary-light { color: var(--color-secondary-light); }
+.text-secondary-dark { color: var(--color-secondary-dark); }
+.text-secondary-contrast { color: var(--color-secondary-contrast); }
+
+.text-accent-main { color: var(--color-accent-main); }
+.text-accent-light { color: var(--color-accent-light); }
+.text-accent-dark { color: var(--color-accent-dark); }
+.text-accent-contrast { color: var(--color-accent-contrast); }
+
+.text-success-main { color: var(--color-success-main); }
+.text-warning-main { color: var(--color-warning-main); }
+.text-error-main { color: var(--color-error-main); }
+
+.text-text-primary { color: var(--color-text-primary); }
+.text-text-secondary { color: var(--color-text-secondary); }
+.text-text-disabled { color: var(--color-text-disabled); }
+
+.bg-primary-main { background-color: var(--color-primary-main); }
+.bg-primary-light { background-color: var(--color-primary-light); }
+.bg-primary-dark { background-color: var(--color-primary-dark); }
+
+.bg-secondary-main { background-color: var(--color-secondary-main); }
+.bg-secondary-light { background-color: var(--color-secondary-light); }
+.bg-secondary-dark { background-color: var(--color-secondary-dark); }
+
+.bg-accent-main { background-color: var(--color-accent-main); }
+.bg-accent-light { background-color: var(--color-accent-light); }
+.bg-accent-dark { background-color: var(--color-accent-dark); }
+
+.bg-neutral-main { background-color: var(--color-neutral-main); }
+.bg-neutral-light { background-color: var(--color-neutral-light); }
+.bg-neutral-dark { background-color: var(--color-neutral-dark); }
+
+/* Responsive container */
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* Button styles */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-family-primary);
+  font-weight: 500;
+}

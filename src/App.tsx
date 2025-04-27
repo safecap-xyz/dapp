@@ -16,27 +16,27 @@ function App() {
     <>
       {/* Layout 1: Header-Content-Footer */}
       <div className="rounded-lg overflow-hidden">
-        <div className="bg-[#001862] h-16 text-white flex items-center justify-between px-4">
+        <div className="bg-primary-main h-16 text-white flex items-center justify-between px-4 shadow-neon">
           <div className="flex items-center">
-            <div className="font-bold text-xl">SafeCap</div>
-            <div className="ml-2 text-sm bg-yellow-600 text-white px-2 py-0.5 rounded-full">Sepolia Testnet</div>
+            <div className="font-secondary font-bold text-2xl glow-text">SafeCap</div>
+            <div className="ml-2 text-sm bg-accent-main text-accent-contrast px-2 py-0.5 rounded-full font-medium">Sepolia Testnet</div>
           </div>
           <div className="flex items-center space-x-6">
             <nav>
-              <ul className="flex space-x-6">
-                <li className={`cursor-pointer ${currentNav === 'home' ? 'border-b-2 border-white' : ''}`}
+              <ul className="flex space-x-6 font-primary font-medium">
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'home' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('home')}>
                   Home
                 </li>
-                <li className={`cursor-pointer ${currentNav === 'deploy' ? 'border-b-2 border-white' : ''}`}
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deploy' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('deploy')}>
                   Deploy
                 </li>
-                <li className={`cursor-pointer ${currentNav === 'donate' ? 'border-b-2 border-white' : ''}`}
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'donate' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('donate')}>
                   Donate
                 </li>
-                <li className={`cursor-pointer ${currentNav === 'about' ? 'border-b-2 border-white' : ''}`}
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'about' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('about')}>
                   About
                 </li>
@@ -48,36 +48,57 @@ function App() {
         <div className="min-h-[120px] text-white text-center">
 
           <div className="bg-main">
-            <div className='content-main min-h-[900px]'>
+            <div className='content-main min-h-[900px] p-6'>
               {currentNav === 'deploy' && (
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4">Deploy Contracts on Sepolia Testnet</h2>
-                  <p className="mb-6">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</p>
-
-                  <DeployContracts />
+                <div>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Deploy Contracts</h1>
+                  <p className="mb-6 text-text-primary font-primary">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</p>
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
+                    <DeployContracts />
+                  </div>
                 </div>
               )}
               
               {currentNav === 'donate' && (
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4">Donate to Test Campaign</h2>
-                  <p className="mb-6">Send a test donation to our sample campaign on the Sepolia testnet.</p>
-
-                  <DonateCampaign 
-                    key="donate-campaign"
-                    campaignAddress="0xa191f56cdce58622f8699b45042eb743f68b874f" 
-                  />
+                <div>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Donate to Campaign</h1>
+                  <p className="mb-6 text-text-primary font-primary">Support campaigns by donating ETH. Connect your wallet to get started.</p>
+                  
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30 mb-8">
+                    <h3 className="text-xl font-secondary font-bold mb-4 text-text-primary">Your Wallet</h3>
+                    <div className="cyber-line w-full my-3"></div>
+                    <AccountInfo />
+                  </div>
+                  
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
+                    <h3 className="text-xl font-secondary font-bold mb-4 text-text-primary">Make a Donation</h3>
+                    <div className="cyber-line w-full my-3"></div>
+                    <DonateCampaign campaignAddress="0x1234567890123456789012345678901234567890" />
+                  </div>
                 </div>
               )}
 
               {currentNav === 'about' && (
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4">About SafeCap</h2>
-                  <p className="mb-6">SafeCap is a decentralized crowdfunding platform built on blockchain technology that enables transparent, secure, and efficient fundraising for projects.</p>
+                <div>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">About SafeCap</h1>
+                  <p className="mb-6 text-text-primary font-primary">SafeCap is a decentralized crowdfunding platform built on blockchain technology that enables transparent, secure, and efficient fundraising for projects.</p>
 
-                  <div className="mb-8">
-                    <h3 className="text-xl font-bold mb-2">Your Wallet</h3>
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30 mb-8">
+                    <h3 className="text-xl font-secondary font-bold mb-4 text-text-primary">Your Wallet</h3>
+                    <div className="cyber-line w-full my-3"></div>
                     <AccountInfo />
+                  </div>
+                  
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30 mb-8">
+                    <h3 className="text-xl font-secondary font-bold mb-4 text-text-primary">How It Works</h3>
+                    <div className="cyber-line w-full my-3"></div>
+                    <div className="space-y-4 text-text-primary font-primary">
+                      <p><span className="text-secondary-main font-bold">1. Create a Campaign</span> - Launch your funding campaign with just a few clicks.</p>
+                      <p><span className="text-secondary-main font-bold">2. Share Your Campaign</span> - Get your unique campaign link and share it with potential donors.</p>
+                      <p><span className="text-secondary-main font-bold">3. Collect Donations</span> - Donors connect their wallets and contribute ETH to your campaign.</p>
+                      <p><span className="text-secondary-main font-bold">4. Reach Your Goal</span> - Once your funding goal is reached, funds are released to your campaign wallet.</p>
+                      <p><span className="text-secondary-main font-bold">5. Withdraw Funds</span> - Transfer funds to your personal wallet or use our integrated services.</p>
+                    </div>
                   </div>
                 </div>
               )}
