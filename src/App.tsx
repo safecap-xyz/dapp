@@ -9,9 +9,9 @@ import { DonateCampaign } from './components/DonateCampaign'
 import { EnhancedDonateCampaign } from './components/EnhancedDonateCampaign'
 
 function App() {
-  const [currentNav, setCurrentNav] = useState('home')
+  const [currentNav] = useState('home')
   // State to toggle between original and enhanced components
-  const [useEnhancedComponents, setUseEnhancedComponents] = useState(true);;
+  const [useEnhancedComponents, setUseEnhancedComponents] = useState(true);
 
   return (
     <>
