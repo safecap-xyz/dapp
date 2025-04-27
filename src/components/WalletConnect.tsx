@@ -57,12 +57,12 @@ export function WalletConnect() {
   if (isConnected) {
     return (
       <div className="flex items-center space-x-2">
-        <div className="text-sm text-white">
+        <div className="text-sm text-primary-contrast font-primary">
           Connected: {address?.substring(0, 6)}...{address?.substring(address.length - 4)}
         </div>
         <button
           onClick={() => disconnect()}
-          className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700 focus:outline-none"
+          className="px-4 py-2 text-sm font-medium text-secondary-contrast bg-error-main rounded font-primary hover:bg-error-main/80 transition-colors focus:outline-none"
         >
           Disconnect
         </button>
@@ -148,26 +148,26 @@ export function WalletConnect() {
     <>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none"
+        className="px-4 py-2 text-sm font-medium text-secondary-contrast bg-secondary-main rounded font-primary hover:bg-secondary-dark transition-colors focus:outline-none"
       >
         Connect Wallet
       </button>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="p-6 bg-white rounded-lg shadow-lg w-96">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary-dark bg-opacity-70">
+          <div className="p-6 bg-neutral-light rounded-lg shadow-lg w-96">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Connect Wallet</h3>
+              <h3 className="text-lg font-medium font-secondary text-primary-dark">Connect Wallet</h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-text-secondary hover:text-primary-dark transition-colors"
               >
                 ×
               </button>
             </div>
 
             {errorMessage && (
-              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+              <div className="mb-4 p-3 bg-error-main/10 text-error-main rounded-md text-sm font-primary">
                 {errorMessage}
               </div>
             )}
@@ -177,7 +177,7 @@ export function WalletConnect() {
               {hasMetaMask && (
                 <button
                   onClick={handleMetaMaskConnect}
-                  className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none"
+                  className="w-full px-4 py-2 text-sm font-medium text-secondary-contrast bg-secondary-main rounded font-primary hover:bg-secondary-dark transition-colors focus:outline-none"
                 >
                   MetaMask
                 </button>
@@ -203,7 +203,7 @@ export function WalletConnect() {
                     key={connector.uid}
                     onClick={() => handleConnect(connector)}
                     disabled={!isReady || isPending}
-                    className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 text-sm font-medium text-secondary-contrast bg-secondary-main rounded font-primary hover:bg-secondary-dark transition-colors focus:outline-none disabled:bg-neutral-dark disabled:text-text-disabled disabled:cursor-not-allowed"
                   >
                     {connector.name}
                     {!isReady && ' (unsupported)'}
@@ -213,7 +213,7 @@ export function WalletConnect() {
               })}
             </div>
 
-            <div className="mt-4 text-xs text-gray-500">
+            <div className="mt-4 text-xs text-text-secondary font-primary">
               {!window.ethereum && (
                 <p className="mt-2">
                   No wallet detected! Install{' '}

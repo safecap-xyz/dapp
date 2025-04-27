@@ -1,63 +1,63 @@
 // Theme configuration for SafeCap
 export const theme = {
-  // Color palette
+  // Color palette - Futuristic Cyberpunk Theme
   colors: {
     primary: {
-      main: '#0A2463',      // Rich deep blue (header/footer background)
-      light: '#3E5C97',
-      dark: '#041542',
+      main: '#0B0E2D',      // Deep space blue (header/footer background)
+      light: '#1E2359',
+      dark: '#050718',
       contrast: '#ffffff',  // Text color on primary background
     },
     secondary: {
-      main: '#1E88E5',      // Vibrant blue for buttons, links
-      light: '#6AB7FF',
-      dark: '#005CB2',
-      contrast: '#ffffff',  // Text color on secondary background
+      main: '#00C2FF',      // Neon blue for buttons, links
+      light: '#5EDFFF',
+      dark: '#0097C4',
+      contrast: '#000000',  // Text color on secondary background
     },
     accent: {
-      main: '#FFD166',      // Vibrant gold for accents and highlights
-      light: '#FFDD8C',
-      dark: '#E5B93D',
-      contrast: '#000000',  // Text color on accent background
+      main: '#FF00E4',      // Vibrant magenta for accents and highlights
+      light: '#FF5EEF',
+      dark: '#B100A0',
+      contrast: '#ffffff',  // Text color on accent background
     },
     success: {
-      main: '#4caf50',
-      light: '#80e27e',
-      dark: '#087f23',
-      contrast: '#ffffff',
+      main: '#00FF9D',
+      light: '#66FFCA',
+      dark: '#00B36F',
+      contrast: '#000000',
     },
     warning: {
-      main: '#ff9800',
-      light: '#ffc947',
-      dark: '#c66900',
+      main: '#FFB800',
+      light: '#FFCF4D',
+      dark: '#CC9400',
       contrast: '#000000',
     },
     error: {
-      main: '#f44336',
-      light: '#ff7961',
-      dark: '#ba000d',
+      main: '#FF3D71',
+      light: '#FF7A9E',
+      dark: '#C30046',
       contrast: '#ffffff',
     },
     neutral: {
-      main: '#f5f5f5',      // Light gray for backgrounds
-      light: '#ffffff',
-      dark: '#e0e0e0',
-      contrast: '#000000',  // Text color on neutral background
+      main: '#121212',      // Dark background for futuristic look
+      light: '#1E1E1E',
+      dark: '#080808',
+      contrast: '#ffffff',  // Text color on neutral background
     },
     text: {
-      primary: '#212121',   // Main text color
-      secondary: '#757575', // Secondary text color
-      disabled: '#9e9e9e',  // Disabled text color
-      hint: '#9e9e9e',      // Hint text color
+      primary: '#E0E0FF',   // Main text color - soft blue-white
+      secondary: '#A0A0C0', // Secondary text color - muted blue-gray
+      disabled: '#6A6A8A',  // Disabled text color - darker blue-gray
+      hint: '#8080A0',      // Hint text color - medium blue-gray
     },
   },
   
   // Typography
   typography: {
     fontFamily: {
-      primary: "'Montserrat', sans-serif",
-      secondary: "'Playfair Display', serif",
-      mono: "'Fira Code', monospace",
+      primary: "'Orbitron', sans-serif",
+      secondary: "'Rajdhani', sans-serif",
+      mono: "'JetBrains Mono', monospace",
       system: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
     },
     fontWeight: {
@@ -111,20 +111,23 @@ export const theme = {
     full: '9999px',
   },
   
-  // Shadows
+  // Shadows - with neon glow effects
   shadows: {
     none: 'none',
-    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    sm: '0 1px 3px 0 rgba(0, 194, 255, 0.1)',
+    md: '0 4px 8px -1px rgba(0, 194, 255, 0.15), 0 2px 4px -1px rgba(0, 194, 255, 0.1)',
+    lg: '0 8px 15px -3px rgba(0, 194, 255, 0.2), 0 4px 6px -2px rgba(0, 194, 255, 0.15)',
+    xl: '0 15px 25px -5px rgba(0, 194, 255, 0.25), 0 10px 10px -5px rgba(0, 194, 255, 0.2)',
+    neon: '0 0 5px rgba(0, 194, 255, 0.5), 0 0 20px rgba(0, 194, 255, 0.3)',
+    neonAccent: '0 0 5px rgba(255, 0, 228, 0.5), 0 0 20px rgba(255, 0, 228, 0.3)',
   },
   
   // Transitions
   transitions: {
-    default: '0.3s ease',
-    fast: '0.15s ease',
-    slow: '0.5s ease',
+    default: '0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    fast: '0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+    slow: '0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+    bounce: '0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)',
   },
 };
 

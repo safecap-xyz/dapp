@@ -1,48 +1,35 @@
 import './App.css'
 import { useState } from 'react'
 import { WalletConnect } from './components/WalletConnect'
+import { EnhancedWalletConnect } from './components/EnhancedWalletConnect'
 import { AccountInfo } from './components/AccountInfo'
 import { DeployContracts } from './components/DeployContracts'
+import { EnhancedDeployContracts } from './components/EnhancedDeployContracts'
 import { DonateCampaign } from './components/DonateCampaign'
+import { EnhancedDonateCampaign } from './components/EnhancedDonateCampaign'
 
 function App() {
-  const [currentNav, setCurrentNav] = useState('home');
-
-  const handleNavClick = (key: string) => {
-    setCurrentNav(key);
-  };
+  const [currentNav, setCurrentNav] = useState('home')
+  // State to toggle between original and enhanced components
+  const [useEnhancedComponents, setUseEnhancedComponents] = useState(true);;
 
   return (
     <>
       {/* Layout 1: Header-Content-Footer */}
       <div className="rounded-lg overflow-hidden">
-        <div className="bg-primary-main h-16 text-primary-contrast flex items-center justify-between px-4 shadow-md">
+        <div className="bg-primary-main h-16 text-white flex items-center justify-between px-4">
           <div className="flex items-center">
-            <div className="font-secondary font-bold text-2xl">SafeCap</div>
+            <div className="font-secondary font-bold text-2xl glow-text">SafeCap</div>
             <div className="ml-2 text-sm bg-accent-main text-accent-contrast px-2 py-0.5 rounded-full font-medium">Sepolia Testnet</div>
           </div>
-          <div className="flex items-center space-x-6">
-            <nav>
-              <ul className="flex space-x-6 font-primary font-medium">
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'home' ? 'border-b-2 border-accent-main' : ''}`}
-                    onClick={() => handleNavClick('home')}>
-                  Home
-                </li>
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deploy' ? 'border-b-2 border-accent-main' : ''}`}
-                    onClick={() => handleNavClick('deploy')}>
-                  Deploy
-                </li>
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'donate' ? 'border-b-2 border-accent-main' : ''}`}
-                    onClick={() => handleNavClick('donate')}>
-                  Donate
-                </li>
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'about' ? 'border-b-2 border-accent-main' : ''}`}
-                    onClick={() => handleNavClick('about')}>
-                  About
-                </li>
-              </ul>
-            </nav>
-            <WalletConnect />
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={() => setUseEnhancedComponents(!useEnhancedComponents)}
+              className="px-3 py-1 text-xs font-medium rounded font-primary transition-colors focus:outline-none bg-accent-main text-accent-contrast hover:bg-accent-light"
+            >
+              {useEnhancedComponents ? 'Use Original UI' : 'Use Enhanced UI'}
+            </button>
+            {useEnhancedComponents ? <EnhancedWalletConnect /> : <WalletConnect />}
           </div>
         </div>
         <div className="min-h-[120px] text-white text-center">
@@ -50,23 +37,20 @@ function App() {
           <div className="bg-main">
             <div className='content-main min-h-[900px]'>
               {currentNav === 'deploy' && (
-                <div className="p-6">
-                  <h2 className="text-3xl font-secondary font-bold mb-4 text-primary-dark">Deploy Contracts on Sepolia Testnet</h2>
-                  <p className="mb-6 text-text-secondary font-primary">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</p>
-
-                  <DeployContracts />
+                <div className="p-4">
+                  <h1 className="text-2xl font-bold mb-4 font-secondary glow-text">Deploy Contracts</h1>
+                  {useEnhancedComponents ? <EnhancedDeployContracts /> : <DeployContracts />}
                 </div>
               )}
               
               {currentNav === 'donate' && (
-                <div className="p-6">
-                  <h2 className="text-3xl font-secondary font-bold mb-4 text-primary-dark">Donate to Test Campaign</h2>
-                  <p className="mb-6 text-text-secondary font-primary">Send a test donation to our sample campaign on the Sepolia testnet.</p>
-
-                  <DonateCampaign 
-                    key="donate-campaign"
-                    campaignAddress="0xa191f56cdce58622f8699b45042eb743f68b874f" 
-                  />
+                <div className="p-4">
+                  <h1 className="text-2xl font-bold mb-4 font-secondary glow-text">Donate to Campaign</h1>
+                  <AccountInfo />
+                  {useEnhancedComponents ? 
+                    <EnhancedDonateCampaign campaignAddress="0x1234567890123456789012345678901234567890" /> : 
+                    <DonateCampaign campaignAddress="0x1234567890123456789012345678901234567890" />
+                  }
                 </div>
               )}
 

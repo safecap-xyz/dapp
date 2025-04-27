@@ -5,31 +5,31 @@ export function AccountInfo() {
 
   if (!isConnected || !address) {
     return (
-      <div className="p-4 bg-blue-100 rounded-lg text-center">
-        <p className="text-blue-800">Connect your wallet to view account information</p>
+      <div className="p-4 bg-secondary-main/10 rounded-lg text-center">
+        <p className="text-secondary-dark font-primary">Connect your wallet to view account information</p>
       </div>
     )
   }
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow">
-      <h2 className="text-xl font-bold mb-4">Account Information</h2>
-      <div className="space-y-2">
+    <div className="p-4 bg-neutral-light rounded-lg shadow-md">
+      <h2 className="text-xl font-secondary font-bold mb-4 text-primary-dark">Account Information</h2>
+      <div className="space-y-2 font-primary">
         <div className="flex justify-between">
-          <span className="font-medium">Address:</span>
-          <span className="font-mono">{displayName}</span>
+          <span className="font-medium text-text-primary">Address:</span>
+          <span className="font-mono text-text-secondary">{displayName}</span>
         </div>
         {balance && (
           <div className="flex justify-between">
-            <span className="font-medium">Balance:</span>
-            <span>
+            <span className="font-medium text-text-primary">Balance:</span>
+            <span className="text-text-secondary">
               {balance.formatted} {balance.symbol}
             </span>
           </div>
         )}
         <div className="flex justify-between">
-          <span className="font-medium">Network:</span>
-          <span className={isSepoliaNetwork ? "text-green-600" : "text-orange-600"}>
+          <span className="font-medium text-text-primary">Network:</span>
+          <span className={isSepoliaNetwork ? "text-success-main" : "text-warning-main"}>
             {isSepoliaNetwork ? "Sepolia Testnet" : `Chain ID: ${chainId || 'Unknown'}`}
             {!isSepoliaNetwork && ' (Please switch to Sepolia)'}
           </span>
