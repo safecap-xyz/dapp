@@ -57,12 +57,12 @@ export function WalletConnect() {
   if (isConnected) {
     return (
       <div className="flex items-center space-x-2">
-        <div className="text-sm text-white">
-          Connected: {address?.substring(0, 6)}...{address?.substring(address.length - 4)}
+        <div className="text-sm text-white font-primary">
+          Connected: <span className="text-secondary-light font-mono">{address?.substring(0, 6)}...{address?.substring(address.length - 4)}</span>
         </div>
         <button
           onClick={() => disconnect()}
-          className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700 focus:outline-none"
+          className="px-3 py-1 text-xs font-medium rounded font-primary transition-colors focus:outline-none bg-error-main text-white hover:bg-opacity-80"
         >
           Disconnect
         </button>
@@ -148,26 +148,26 @@ export function WalletConnect() {
     <>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none"
+        className="px-4 py-2 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon"
       >
         Connect Wallet
       </button>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="p-6 bg-white rounded-lg shadow-lg w-96">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+          <div className="p-6 glass-panel rounded-lg shadow-neon border border-secondary-main/30 w-96">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Connect Wallet</h3>
+              <h3 className="text-xl font-secondary font-bold text-text-primary glow-text">Connect Wallet</h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-accent-main hover:text-accent-light transition-colors"
               >
                 ×
               </button>
             </div>
 
             {errorMessage && (
-              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+              <div className="mb-4 p-3 bg-error-main/20 border border-error-main/30 text-error-main rounded-md text-sm font-primary">
                 {errorMessage}
               </div>
             )}
@@ -177,9 +177,9 @@ export function WalletConnect() {
               {hasMetaMask && (
                 <button
                   onClick={handleMetaMaskConnect}
-                  className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none"
+                  className="w-full px-4 py-3 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon mb-2 flex items-center justify-center"
                 >
-                  MetaMask
+                  <span className="mr-2">🦊</span> MetaMask
                 </button>
               )}
 
@@ -200,14 +200,16 @@ export function WalletConnect() {
 
                 return (
                   <button
+                    disabled={!isReady || isPending}
                     key={connector.uid}
                     onClick={() => handleConnect(connector)}
-                    disabled={!isReady || isPending}
-                    className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className={`w-full px-4 py-3 text-sm font-medium rounded font-primary transition-colors focus:outline-none mb-2 flex items-center justify-center ${!isReady ? 'bg-primary-dark/50 text-text-disabled cursor-not-allowed' : isPending && pendingConnectorId === connector.id ? 'bg-secondary-main/50 text-secondary-contrast/70' : 'bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon'}`}
                   >
+                    {connector.id === 'walletConnect' && <span className="mr-2">🔗</span>}
+                    {connector.id === 'coinbaseWallet' && <span className="mr-2">🪙</span>}
                     {connector.name}
                     {!isReady && ' (unsupported)'}
-                    {isPending && connector.id === pendingConnectorId && ' (connecting...)'}
+                    {isPending && pendingConnectorId === connector.id && ' (connecting...)'}
                   </button>
                 );
               })}
