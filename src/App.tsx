@@ -5,8 +5,7 @@ import { AccountInfo } from './components/AccountInfo'
 import { DeployContracts } from './components/DeployContracts'
 import { CampaignList } from './components/CampaignList'
 import { ThemeProvider } from './theme/ThemeProvider'
-import { Button, Typography } from './components/ui'
-import Showcase from './components/ui/Showcase'
+import { Typography } from './components/ui'
 
 function App() {
   const [currentNav, setCurrentNav] = useState('home');
