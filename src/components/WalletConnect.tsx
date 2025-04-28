@@ -58,8 +58,40 @@ export function WalletConnect() {
   const handleDisconnect = async () => {
     try {
       console.log('Attempting to disconnect wallet...');
-      // Use a more forceful disconnection approach
+      
+      // Clear Wagmi-related local storage items
+      const clearWagmiStorage = () => {
+        console.log('Clearing wallet connection data from local storage...');
+        // Clear Wagmi connection data
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('wagmi') || 
+              key.includes('wallet') || 
+              key.includes('connect') ||
+              key.includes('ethereum') ||
+              key.includes('account')) {
+            console.log(`Removing localStorage item: ${key}`);
+            localStorage.removeItem(key);
+          }
+        });
+        
+        // Clear session storage items as well
+        Object.keys(sessionStorage).forEach(key => {
+          if (key.startsWith('wagmi') || 
+              key.includes('wallet') || 
+              key.includes('connect') ||
+              key.includes('ethereum') ||
+              key.includes('account')) {
+            console.log(`Removing sessionStorage item: ${key}`);
+            sessionStorage.removeItem(key);
+          }
+        });
+      };
+      
+      // Use the standard disconnect function
       await disconnect();
+      
+      // Clear storage data
+      clearWagmiStorage();
       
       // Force a window reload after a short delay to ensure all components update
       setTimeout(() => {

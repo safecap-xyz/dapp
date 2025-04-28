@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { WalletConnect } from './components/WalletConnect'
 import { AccountInfo } from './components/AccountInfo'
 import { DeployContracts } from './components/DeployContracts'
+import { DeployManaged } from './components/DeployManaged'
 import { CampaignList } from './components/CampaignList'
 import { ThemeProvider } from './theme/ThemeProvider'
 import { Typography } from './components/ui'
@@ -33,6 +34,10 @@ function App() {
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deploy' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('deploy')}>
                   Deploy
+                </li>
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deploy-managed' ? 'border-b-2 border-accent-main' : ''}`}
+                    onClick={() => handleNavClick('deploy-managed')}>
+                  Deploy Managed
                 </li>
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'donate' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('donate')}>
@@ -83,6 +88,16 @@ function App() {
                   <p className="mb-6 text-text-primary font-primary">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</p>
                   <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
                     <DeployContracts />
+                  </div>
+                </div>
+              )}
+
+              {currentNav === 'deploy-managed' && (
+                <div>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Deploy Managed Campaign</h1>
+                  <p className="mb-6 text-text-primary font-primary">Create a campaign without signing transactions using developer-controlled wallets.</p>
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
+                    <DeployManaged />
                   </div>
                 </div>
               )}
