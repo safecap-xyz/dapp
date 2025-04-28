@@ -43,10 +43,6 @@ function App() {
                     onClick={() => handleNavClick('about')}>
                   About
                 </li>
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'showcase' ? 'border-b-2 border-accent-main' : ''}`}
-                    onClick={() => handleNavClick('showcase')}>
-                  UI
-                </li>
               </ul>
             </nav>
             <WalletConnect />
@@ -58,10 +54,12 @@ function App() {
             <div className='content-main min-h-[900px] p-6'>
               {currentNav === 'home' && (
                 <div>
-                  <Typography variant="h1" className="mb-6 glow-text">Welcome to SafeCap</Typography>
-                  <Typography variant="body1" className="mb-8">The future of decentralized crowdfunding is here. Launch your campaign with transparency and security.</Typography>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Welcome to SafeCap</h1>
+                  {/* <p className="mb-6 text-text-primary font-primary">The future of decentralized crowdfunding is here. Launch your campaign with transparency and security.</p> */}
+                  {/* <Typography variant="h1" className="mb-6 glow-text">Welcome to SafeCap</Typography>
+                  <Typography variant="body1" className="mb-8">The future of decentralized crowdfunding is here. Launch your campaign with transparency and security.</Typography> */}
 
-                  <div className="flex gap-4 justify-center mt-8">
+                  {/* <div className="flex gap-4 justify-center mt-8">
                     <Button
                       variant="secondary"
                       size="large"
@@ -76,14 +74,14 @@ function App() {
                     >
                       Explore Campaigns
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
               )}
 
               {currentNav === 'deploy' && (
                 <div>
-                  <Typography variant="h1" className="mb-6 glow-text">Deploy Contracts</Typography>
-                  <Typography variant="body1" className="mb-6">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</Typography>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Deploy Contracts</h1>
+                  <p className="mb-6 text-text-primary font-primary">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</p>
                   <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
                     <DeployContracts />
                   </div>
@@ -96,8 +94,8 @@ function App() {
 
               {currentNav === 'about' && (
                 <div>
-                  <Typography variant="h1" className="mb-6 glow-text">About SafeCap</Typography>
-                  <Typography variant="body1" className="mb-6">SafeCap is a decentralized crowdfunding platform built on blockchain technology that enables transparent, secure, and efficient fundraising for projects.</Typography>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">About SafeCap</h1>
+                  <p className="mb-6 text-text-primary font-primary">SafeCap is a decentralized crowdfunding platform built on blockchain technology that enables transparent, secure, and efficient fundraising for projects.</p>
 
                   <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30 mb-8">
                     <Typography variant="h3" className="mb-4">Your Wallet</Typography>
@@ -119,7 +117,7 @@ function App() {
                 </div>
               )}
 
-              {currentNav === 'showcase' && (
+              {/* {currentNav === 'showcase' && (
                 <div>
                   <Typography variant="h1" className="mb-6 glow-text">UI Component Showcase</Typography>
                   <Typography variant="body1" className="mb-6">
@@ -128,7 +126,7 @@ function App() {
                   </Typography>
                   <Showcase />
                 </div>
-              )}
+              )} */}
             </div>
 
           </div>
