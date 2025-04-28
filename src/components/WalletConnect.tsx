@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { useAccount, useConnect, useDisconnect, type Connector } from 'wagmi'
 import { metaMask } from 'wagmi/connectors'
 
 export function WalletConnect() {
@@ -30,7 +30,7 @@ export function WalletConnect() {
         setHasMetaMask(true);
       } else if (providers) {
         // Find MetaMask in providers array
-        const metaMaskProvider = providers.find((p: any) => p.isMetaMask);
+        const metaMaskProvider = providers.find((p: { isMetaMask?: boolean }) => p.isMetaMask);
         setHasMetaMask(!!metaMaskProvider);
         console.log('MetaMask in providers array:', !!metaMaskProvider);
       }
@@ -54,6 +54,27 @@ export function WalletConnect() {
     }
   }, [error])
 
+  // Handle wallet disconnection with error handling
+  const handleDisconnect = async () => {
+    try {
+      console.log('Attempting to disconnect wallet...');
+      // Use a more forceful disconnection approach
+      await disconnect();
+      
+      // Force a window reload after a short delay to ensure all components update
+      setTimeout(() => {
+        // This will ensure all components are in sync with the wallet state
+        window.location.reload();
+      }, 300);
+      
+      console.log('Wallet disconnected successfully');
+    } catch (err) {
+      console.error('Error disconnecting wallet:', err);
+      // Continue with UI update even if there was an error
+      // This ensures the UI reflects disconnected state even if the provider had issues
+    }
+  };
+
   if (isConnected) {
     return (
       <div className="flex items-center space-x-2">
@@ -61,7 +82,7 @@ export function WalletConnect() {
           Connected: <span className="text-secondary-light font-mono">{address?.substring(0, 6)}...{address?.substring(address.length - 4)}</span>
         </div>
         <button
-          onClick={() => disconnect()}
+          onClick={handleDisconnect}
           className="px-3 py-1 text-xs font-medium rounded font-primary transition-colors focus:outline-none bg-error-main text-white hover:bg-opacity-80"
         >
           Disconnect
@@ -70,7 +91,7 @@ export function WalletConnect() {
     )
   }
 
-  const handleConnect = async (connector: any) => {
+  const handleConnect = async (connector: Connector) => {
     try {
       console.log(`Attempting to connect with ${connector.name} (${connector.id})`);
       console.log('Connector details:', connector);
@@ -99,27 +120,33 @@ export function WalletConnect() {
       const result = await connect({ connector });
       console.log('Connection result:', result);
       setIsModalOpen(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Connection error:', err);
       // Log detailed error information
-      console.error('Error details:', {
-        message: err.message,
-        code: err.code,
-        stack: err.stack,
-        cause: err.cause,
-        name: err.name
-      });
+      if (err instanceof Error) {
+        console.error('Error details:', {
+          message: err.message,
+          stack: err.stack,
+          name: err.name
+        });
+      } else {
+        console.error('Unknown error:', err);
+      }
 
       // Set a more descriptive error message
-      let errorMsg = err.message || 'Failed to connect wallet. Please try again.';
+      let errorMsg = 'Failed to connect wallet. Please try again.';
+      
+      if (err instanceof Error) {
+        errorMsg = err.message || errorMsg;
 
-      // Add specific error handling for common issues
-      if (err.message?.includes('already processing')) {
-        errorMsg = 'There is already a pending wallet connection request. Please check your wallet.';
-      } else if (err.message?.includes('rejected')) {
-        errorMsg = 'Connection request was rejected. Please try again and approve the connection in your wallet.';
-      } else if (err.message?.includes('user rejected')) {
-        errorMsg = 'You rejected the connection request. Please try again and approve the connection.';
+        // Add specific error handling for common issues
+        if (err.message.includes('already processing')) {
+          errorMsg = 'There is already a pending wallet connection request. Please check your wallet.';
+        } else if (err.message.includes('rejected')) {
+          errorMsg = 'Connection request was rejected. Please try again and approve the connection in your wallet.';
+        } else if (err.message.includes('user rejected')) {
+          errorMsg = 'You rejected the connection request. Please try again and approve the connection.';
+        }
       }
 
       setErrorMessage(errorMsg);
@@ -136,9 +163,13 @@ export function WalletConnect() {
       setPendingConnectorId('metaMask');
       await connect({ connector: metaMaskConnector });
       setIsModalOpen(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('MetaMask connection error:', err);
-      setErrorMessage(err.message || 'Failed to connect to MetaMask');
+      let errorMsg = 'Failed to connect to MetaMask';
+      if (err instanceof Error) {
+        errorMsg = err.message || errorMsg;
+      }
+      setErrorMessage(errorMsg);
     } finally {
       setPendingConnectorId(null);
     }

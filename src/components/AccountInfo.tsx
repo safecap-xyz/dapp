@@ -1,9 +1,45 @@
 import { useWallet } from '../web3/hooks/useWallet'
+import { useEffect, useState } from 'react'
 
 export function AccountInfo() {
   const { isConnected, displayName, balance, address, chainId, isSepoliaNetwork } = useWallet()
+  const [isWalletAvailable, setIsWalletAvailable] = useState(true)
+  
+  // Additional check to verify wallet connection status
+  useEffect(() => {
+    const checkWalletStatus = () => {
+      // Check if the wallet provider is still available
+      const isProviderAvailable = window.ethereum && 
+        (window.ethereum.isConnected?.() !== false);
+      
+      setIsWalletAvailable(!!isProviderAvailable);
+      
+      if (!isProviderAvailable && isConnected) {
+        console.log('Wallet provider disconnected but state shows connected');
+      }
+    };
+    
+    // Check immediately
+    checkWalletStatus();
+    
+    // Set up listeners for connection changes
+    const handleAccountsChanged = () => checkWalletStatus();
+    const handleDisconnect = () => setIsWalletAvailable(false);
+    
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('disconnect', handleDisconnect);
+    }
+    
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('disconnect', handleDisconnect);
+      }
+    };
+  }, [isConnected])
 
-  if (!isConnected || !address) {
+  if (!isConnected || !address || !isWalletAvailable) {
     return (
       <div className="p-4 bg-primary-dark/30 rounded-lg text-center border border-secondary-main/30">
         <p className="text-secondary-light font-primary">Connect your wallet to view account information</p>

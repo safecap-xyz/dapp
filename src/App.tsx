@@ -130,7 +130,7 @@ function App() {
 
           </div>
 
-            <section className="content-full">
+            {/* <section className="content-full">
               <div className="content-full-inner">
                 <Typography variant="h2" className="text-[46px] font-bold">The Future of Crowd-funding is Here.</Typography>
               </div>
@@ -160,7 +160,7 @@ function App() {
                   </li>
                 </ul>
               </div>
-            </section>
+            </section> */}
         </div>
         <div className="bg-primary-dark text-white text-center py-4">
           <div className="container mx-auto">
