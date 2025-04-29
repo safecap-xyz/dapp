@@ -11,9 +11,15 @@ interface Wallet {
 interface Campaign {
   id: string;
   name: string;
+  description?: string;
+  goal?: string;
   contractAddress?: string;
+  factoryAddress?: string;
+  nftAddress?: string;
   status?: string;
-  deploymentTxHash?: string;
+  deploymentTxHashes?: string[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface CampaignStatus {
@@ -24,6 +30,8 @@ interface CampaignStatus {
 interface TransactionResult {
   transactionHash: string;
   status: string;
+  blockNumber?: number;
+  amount?: string;
 }
 
 interface CampaignData {
@@ -31,6 +39,7 @@ interface CampaignData {
   name: string;
   description: string;
   goal: string;
+  duration?: string;
 }
 
 interface TransactionData {
@@ -87,7 +96,7 @@ async function getWalletAddress(userId: string = 'default-user') {
 }
 
 /**
- * Creates a one-click campaign
+ * Creates a one-click campaign using the managed wallet
  */
 async function startCampaign(campaignData: CampaignData) {
   try {
@@ -112,7 +121,7 @@ async function startCampaign(campaignData: CampaignData) {
 }
 
 /**
- * Sends a transaction to a campaign
+ * Sends a transaction to a campaign using the managed wallet
  */
 async function sendTransaction(transactionData: TransactionData) {
   try {
@@ -201,7 +210,7 @@ export const DeployManaged = () => {
     }
   };
   
-  // Start a one-click campaign
+  // Start a one-click campaign using managed wallet
   const handleStartCampaign = async () => {
     if (!userId) {
       setError('User ID is required');
@@ -213,6 +222,11 @@ export const DeployManaged = () => {
       return;
     }
     
+    if (!wallet) {
+      setError('Please create a wallet first');
+      return;
+    }
+    
     setLoading(true);
     setError(null);
     
@@ -220,8 +234,9 @@ export const DeployManaged = () => {
       const campaignData = {
         userId,
         name: campaignName,
-        description: 'This campaign was created with one click!',
-        goal: campaignGoal
+        description: 'This campaign was created with a managed wallet!',
+        goal: campaignGoal,
+        duration: '30' // 30 days by default
       };
       
       const result = await startCampaign(campaignData);
@@ -363,9 +378,23 @@ export const DeployManaged = () => {
             <Typography variant="h5" className="mb-2">Campaign Information</Typography>
             <p><strong>Campaign ID:</strong> {campaign.id}</p>
             <p><strong>Name:</strong> {campaign.name}</p>
-            <p><strong>Contract Address:</strong> {campaign.contractAddress}</p>
+            <p><strong>Description:</strong> {campaign.description}</p>
+            <p><strong>Goal:</strong> {campaign.goal} ETH</p>
             <p><strong>Status:</strong> {campaign.status}</p>
-            <p><strong>Deployment Transaction:</strong> {campaign.deploymentTxHash}</p>
+            <p><strong>Campaign Address:</strong> {campaign.contractAddress}</p>
+            <p><strong>Factory Address:</strong> {campaign.factoryAddress}</p>
+            <p><strong>NFT Address:</strong> {campaign.nftAddress}</p>
+            <p><strong>Created At:</strong> {campaign.createdAt && new Date(campaign.createdAt).toLocaleString()}</p>
+            {campaign.deploymentTxHashes && campaign.deploymentTxHashes.length > 0 && (
+              <div>
+                <p><strong>Deployment Transactions:</strong></p>
+                <ul className="list-disc pl-5">
+                  {campaign.deploymentTxHashes.map((hash, index) => (
+                    <li key={index} className="break-all">{hash}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -397,6 +426,8 @@ export const DeployManaged = () => {
             <Typography variant="h5" className="mb-2">Transaction Result</Typography>
             <p><strong>Transaction Hash:</strong> {transactionResult.transactionHash}</p>
             <p><strong>Status:</strong> {transactionResult.status}</p>
+            {transactionResult.blockNumber && <p><strong>Block Number:</strong> {transactionResult.blockNumber}</p>}
+            {transactionResult.amount && <p><strong>Amount:</strong> {transactionResult.amount} ETH</p>}
           </div>
         )}
         
