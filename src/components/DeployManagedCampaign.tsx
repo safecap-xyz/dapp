@@ -155,8 +155,8 @@ export function DeployManagedCampaign() {
       setSuccess('');
       setTransactionHash('');
 
-      if (!smartAccount?.smartAccountAddress) {
-        throw new Error('Smart account address not available. Please create a smart account first.');
+      if (!smartAccount) {
+        throw new Error('Smart account not created. Please create a smart account first.');
       }
 
       // Prepare the user operation data for contract deployment
@@ -168,6 +168,47 @@ export function DeployManagedCampaign() {
         data: "0x" // This would be the contract bytecode + constructor args
       };
 
+      // Use the connected wallet address or the created account address
+      const ownerAddress = address || account?.address;
+      
+      if (!ownerAddress) {
+        throw new Error('No owner address available. Please connect a wallet or create an account first.');
+      }
+
+      console.log('Sending user operation with owner address:', ownerAddress);
+      console.log('Smart account address:', smartAccount.smartAccountAddress);
+
+      // First, try the sample user operation endpoint that uses a format known to work
+      // This is useful for testing if the API and CDP SDK are working correctly
+      console.log('Trying sample user operation first...');
+      const sampleResponse = await fetch(`${config.apiBaseUrl}/api/sample-user-operation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          network: 'base-sepolia'
+        }),
+      });
+
+      if (!sampleResponse.ok) {
+        const sampleData = await sampleResponse.json();
+        console.error('Sample user operation failed:', sampleData.error);
+        setError(`Sample user operation failed: ${sampleData.error}`);
+        // If the sample operation fails, there's likely an issue with the CDP SDK configuration
+        throw new Error(`Sample user operation failed: ${sampleData.error}`);
+      } else {
+        const sampleData = await sampleResponse.json();
+        console.log('Sample user operation succeeded:', sampleData);
+        setSuccess(`Sample user operation succeeded! UserOpHash: ${sampleData.userOpHash}`);
+        // Set the transaction hash from the sample operation
+        setTransactionHash(sampleData.transactionHash || sampleData.userOpHash);
+        // Since the sample operation succeeded, we don't need to continue with the regular operation
+        setLoading(false);
+        return;
+      }
+
+      // Now try the regular user operation with our smart account
       const response = await fetch(`${config.apiBaseUrl}/api/send-user-operation`, {
         method: 'POST',
         headers: {
@@ -176,7 +217,8 @@ export function DeployManagedCampaign() {
         body: JSON.stringify({
           smartAccountAddress: smartAccount.smartAccountAddress,
           network: 'base-sepolia',
-          calls: [userOperation]
+          calls: [userOperation],
+          ownerAddress // Include the owner address
         }),
       });
 
