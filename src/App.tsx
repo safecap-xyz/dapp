@@ -4,6 +4,8 @@ import { WalletConnect } from './components/WalletConnect'
 import { AccountInfo } from './components/AccountInfo'
 import { DeployContracts } from './components/DeployContracts'
 import { DeployManagedCampaign } from './components/DeployManagedCampaign'
+import { SmartAccountDeployer } from './components/SmartAccountDeployer'
+import { SmartAccountTester } from './components/SmartAccountTester'
 import { CampaignList } from './components/CampaignList'
 import { ThemeProvider } from './theme/ThemeProvider'
 import { Typography } from './components/ui'
@@ -37,7 +39,15 @@ function App() {
                 </li>
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deployT' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('deployT')}>
-                  Deploy Secure
+                  Deploy Managed
+                </li>
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'smartAccount' ? 'border-b-2 border-accent-main' : ''}`}
+                    onClick={() => handleNavClick('smartAccount')}>
+                  Smart Account
+                </li>
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'tester' ? 'border-b-2 border-accent-main' : ''}`}
+                    onClick={() => handleNavClick('tester')}>
+                  SmartOp Tester
                 </li>
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'donate' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('donate')}>
@@ -98,6 +108,26 @@ function App() {
                   <p className="mb-6 text-text-primary font-primary">Deploy a managed campaign using account abstraction and smart accounts.</p>
                   <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
                     <DeployManagedCampaign />
+                  </div>
+                </div>
+              )}
+
+              {currentNav === 'smartAccount' && (
+                <div>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Smart Account Deployment</h1>
+                  <p className="mb-6 text-text-primary font-primary">Deploy campaigns using a smart account with UserOp for gasless transactions.</p>
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
+                    <SmartAccountDeployer />
+                  </div>
+                </div>
+              )}
+
+              {currentNav === 'tester' && (
+                <div>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Smart Account Operation Tester</h1>
+                  <p className="mb-6 text-text-primary font-primary">Test smart account operations with simple UserOp transactions.</p>
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
+                    <SmartAccountTester />
                   </div>
                 </div>
               )}
