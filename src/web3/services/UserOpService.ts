@@ -1,7 +1,6 @@
-import { useState, useCallback } from 'react'
-import { type Address } from 'viem'
+import { useCallback, useState } from 'react'
+import { type Address, encodeFunctionData } from 'viem'
 import { usePublicClient } from 'wagmi'
-import { encodeFunctionData } from 'viem'
 import config from '../../config'
 
 // Import ABIs
@@ -9,12 +8,9 @@ import CampaignFactoryABIData from '../abis/CampaignFactory.json'
 import CampaignNFTABIData from '../abis/CampaignNFT.json'
 
 // TypeScript cast to ensure type safety
-const CampaignFactoryABI = CampaignFactoryABIData.abi
 const CampaignFactoryBytecode = CampaignFactoryABIData.bytecode
-const CampaignNFTABI = CampaignNFTABIData.abi
 const CampaignNFTBytecode = CampaignNFTABIData.bytecode
 
-// Interface for UserOp call
 export interface UserOpCall {
   to: string;
   value: string;
@@ -83,12 +79,128 @@ export function useUserOp() {
     // Combine bytecode and encoded arguments
     const data = `${bytecode}${encodedArgs}`;
 
-    console.log('Contract deployment data:', data);
+    return {
+      to: "0x0000000000000000000000000000000000000000", // For contract deployment, use zero address
+      value: "0",
+      data: data
+    }
+  }, [])
+
+  /**
+   * Creates call data for deploying an NFT contract
+   */
+  const createNFTCallData = useCallback((factoryAddress: Address, ownerAddress: Address): UserOpCall => {
+    const baseURI = "ipfs://"
+
+    // Ensure bytecode has 0x prefix
+    let bytecode = CampaignNFTBytecode;
+    if (!bytecode.startsWith('0x')) {
+      bytecode = `0x${bytecode}`;
+    }
+
+    // Get only the constructor arguments encoded (without function selector)
+    const encodedArgs = encodeFunctionData({
+      abi: [{
+        type: 'constructor',
+        inputs: [
+          { type: 'address', name: '_factoryAddress' },
+          { type: 'string', name: '_baseURI' },
+          { type: 'address', name: 'initialOwner' }
+        ]
+      }],
+      args: [factoryAddress, baseURI, ownerAddress]
+    }).slice(10); // Remove '0x' + function selector (8 chars)
+
+    // Combine bytecode and encoded arguments
+    const data = `${bytecode}${encodedArgs}`;
 
     return {
       to: "0x0000000000000000000000000000000000000000", // For contract deployment, use zero address
       value: "0",
       data: data
+    }
+  }, [])
+
+  /**
+   * Creates call data for deploying the final factory contract
+   */
+  const createFinalFactoryCallData = useCallback((nftAddress: Address, ownerAddress: Address): UserOpCall => {
+    // Ensure bytecode has 0x prefix
+    let bytecode = CampaignFactoryBytecode;
+    if (!bytecode.startsWith('0x')) {
+      bytecode = `0x${bytecode}`;
+    }
+
+    // Get only the constructor arguments encoded (without function selector)
+    const encodedArgs = encodeFunctionData({
+      abi: [{
+        type: 'constructor',
+        inputs: [
+          { type: 'address', name: '_nftContract' },
+          { type: 'address', name: 'initialOwner' }
+        ]
+      }],
+      args: [nftAddress, ownerAddress]
+    }).slice(10); // Remove '0x' + function selector (8 chars)
+
+    // Combine bytecode and encoded arguments
+    const data = `${bytecode}${encodedArgs}`;
+
+    return {
+      to: "0x0000000000000000000000000000000000000000", // For contract deployment, use zero address
+      value: "0",
+      data: data
+    }
+  }, [])
+
+  /**
+   * Creates call data for updating the NFT contract with the final factory address
+   */
+  const createUpdateNFTCallData = useCallback((nftAddress: Address, factoryAddress: Address): UserOpCall => {
+    return {
+      to: nftAddress,
+      value: "0",
+      data: encodeFunctionData({
+        abi: CampaignNFTABIData.abi,
+        functionName: 'updateFactoryAddress',
+        args: [factoryAddress]
+      })
+    }
+  }, [])
+
+  /**
+   * Creates call data for creating a campaign through the factory
+   */
+  const createCampaignCallData = useCallback((
+    factoryAddress: Address,
+    creatorAddress: Address,
+    campaignDetails: CampaignDetails
+  ): UserOpCall => {
+    // Convert ETH to Wei (1 ETH = 10^18 Wei)
+    const goalInEth = campaignDetails.goal || '0.1'
+    const goalInWei = BigInt(Math.floor(parseFloat(goalInEth) * 1e18))
+
+    const token = '0x0000000000000000000000000000000000000000' // Using ETH
+
+    // Create a metadata object with all campaign details
+    const metadata = {
+      name: campaignDetails.name || 'Sample Campaign',
+      description: campaignDetails.description || 'A sample fundraising campaign',
+      duration: campaignDetails.duration || '30', // days
+      createdAt: new Date().toISOString()
+    }
+
+    // Encode the metadata as a JSON string and use it as the campaign URI
+    const campaignURI = `data:application/json,${encodeURIComponent(JSON.stringify(metadata))}`
+
+    return {
+      to: factoryAddress,
+      value: "0",
+      data: encodeFunctionData({
+        abi: CampaignFactoryABIData.abi,
+        functionName: 'createCampaign',
+        args: [creatorAddress, goalInWei, token, campaignURI]
+      })
     }
   }, [])
 
@@ -218,20 +330,24 @@ export function useUserOp() {
     setState(initialState)
   }, [])
 
+  interface UserOpServiceReturn {
+    createNFTCallData: (factoryAddress: Address, ownerAddress: Address) => UserOpCall
+    createFinalFactoryCallData: (nftAddress: Address, ownerAddress: Address) => UserOpCall
+    createUpdateNFTCallData: (nftAddress: Address, factoryAddress: Address) => UserOpCall
+    createCampaignCallData: (factoryAddress: Address, creatorAddress: Address, campaignDetails: CampaignDetails) => UserOpCall
+    sendUserOp: (smartAccountAddress: Address, network: string, calls: UserOpCall[]) => Promise<UserOpResponse>
+    deployContractsViaUserOp: (smartAccountAddress: Address, ownerAddress: Address, network: string, campaignDetails: CampaignDetails) => Promise<UserOpResponse>
+    reset: () => void
+  }
+
   return {
     ...state,
-    // Data construction functions
-    createTempFactoryCallData,
     createNFTCallData,
     createFinalFactoryCallData,
     createUpdateNFTCallData,
     createCampaignCallData,
-
-    // Operation functions
     sendUserOp,
     deployContractsViaUserOp,
-
-    // State management
     reset
-  }
+  } as UserOpServiceReturn
 }

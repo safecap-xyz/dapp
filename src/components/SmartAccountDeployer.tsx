@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useWallet } from '../web3/hooks/useWallet'
 import { useUserOp } from '../web3/services/UserOpService'
 import { NetworkSwitcher } from './NetworkSwitcher'
 import { Typography } from './ui'
 import config from '../config'
+import { type Address } from 'viem'
+import { type UserOpCall } from '../web3/services/UserOpService'
 
 interface SmartAccount {
   smartAccountAddress: string;
@@ -11,33 +13,46 @@ interface SmartAccount {
   network: string;
 }
 
+interface UserOpServiceReturn {
+  createNFTCallData: (factoryAddress: Address, ownerAddress: Address) => UserOpCall
+  createFinalFactoryCallData: (nftAddress: Address, ownerAddress: Address) => UserOpCall
+  createUpdateNFTCallData: (nftAddress: Address, factoryAddress: Address) => UserOpCall
+  createCampaignCallData: (factoryAddress: Address, creatorAddress: Address, campaignDetails: CampaignDetails) => UserOpCall
+  sendUserOp: (smartAccountAddress: Address, network: string, calls: UserOpCall[]) => Promise<{ userOpHash: string, transactionHash?: string }>
+  deployContractsViaUserOp: (smartAccountAddress: Address, ownerAddress: Address, network: string, campaignDetails: CampaignDetails) => Promise<{ userOpHash: string, transactionHash?: string }>
+  reset: () => void
+}
+
+interface CampaignDetails {
+  name: string
+  description: string
+  goal: string
+  duration: string
+}
+
 export function SmartAccountDeployer() {
   const { isConnected, address } = useWallet()
+  const userOp = useUserOp()
 
   // State for selected smart account
-  const [smartAccounts, setSmartAccounts] = useState<SmartAccount[]>([])
   const [selectedAccount, setSelectedAccount] = useState<SmartAccount | null>(null)
+  const [smartAccounts, setSmartAccounts] = useState<SmartAccount[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-
-  // Campaign form state
   const [campaignName, setCampaignName] = useState('')
-  const [fundingGoal, setFundingGoal] = useState('1.0')
+  const [campaignGoal, setCampaignGoal] = useState('1.0')
   const [campaignDescription, setCampaignDescription] = useState('')
   const [campaignDuration, setCampaignDuration] = useState('30')
-
-  // Use our UserOp service
-  const userOp = useUserOp()
 
   // Fetch smart accounts when connected
   useEffect(() => {
     if (isConnected && address) {
-      fetchSmartAccounts()
+      fetchSmartAccounts(address)
     }
-  }, [isConnected, address])
+  }, [isConnected, address, fetchSmartAccounts])
 
-  const fetchSmartAccounts = async () => {
+  const fetchSmartAccounts = useCallback(async (address: string) => {
     if (!address) return
 
     try {
@@ -64,7 +79,7 @@ export function SmartAccountDeployer() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   const createNewSmartAccount = async () => {
     if (!address) return
@@ -116,10 +131,10 @@ export function SmartAccountDeployer() {
       setError('')
       setSuccess('')
 
-      const campaignDetails = {
+      const campaignDetails: CampaignDetails = {
         name: campaignName,
         description: campaignDescription,
-        goal: fundingGoal,
+        goal: campaignGoal,
         duration: campaignDuration
       }
 
@@ -230,13 +245,13 @@ export function SmartAccountDeployer() {
             <div>
               <label className="block text-text-primary font-primary mb-2">Funding Goal (ETH)</label>
               <input
-                min="0.1"
-                step="0.1"
+                type="number"
+                min="0"
+                step="0.01"
+                value={campaignGoal}
+                onChange={(e) => setCampaignGoal(e.target.value)}
                 className="w-full px-3 py-2 border border-secondary-main/30 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-main/50 bg-primary-dark/30 text-text-primary font-primary"
                 placeholder="1.0"
-                type="number"
-                value={fundingGoal}
-                onChange={(e) => setFundingGoal(e.target.value)}
               />
             </div>
 
@@ -285,20 +300,17 @@ export function SmartAccountDeployer() {
         {success && (
           <div className="mt-4 p-3 bg-success-main/20 rounded-lg border border-success-main/30">
             <p className="text-success-main">{success}</p>
-          </div>
-        )}
-
-        {userOp.userOpHash && (
-          <div className="mt-4 p-3 bg-primary-dark/30 rounded-lg border border-secondary-main/30">
-            <p className="text-text-primary mb-2"><span className="font-medium">UserOp Hash:</span> {userOp.userOpHash}</p>
-            <a
-              href={`https://basescan.org/tx/${userOp.transactionHash || userOp.userOpHash}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-secondary-main hover:text-secondary-light transition-colors"
-            >
-              View Transaction on Block Explorer
-            </a>
+            {userOp.userOpHash && (
+              <div className="mt-4">
+                <p className="text-text-primary mb-2"><span className="font-medium">UserOp Hash:</span> {userOp.userOpHash}</p>
+                <a href={`https://basescan.org/tx/${userOp.transactionHash || userOp.userOpHash}`} 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   className="text-primary hover:underline">
+                  View on BaseScan
+                </a>
+              </div>
+            )}
           </div>
         )}
       </div>

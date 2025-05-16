@@ -1,8 +1,7 @@
 import { useCallback, useState } from 'react'
-import { type Address, type Hash } from 'viem'
+import { type Address, type Hash, type Abi } from 'viem'
 import { useWalletClient, usePublicClient } from 'wagmi'
 import { baseSepolia } from 'wagmi/chains'
-import type { WriteContractParameters } from '@wagmi/core'
 
 // Import ABIs directly from JSON
 // Note: Make sure these files have been properly copied over
@@ -11,9 +10,9 @@ import CampaignFactoryABIData from '../abis/CampaignFactory.json'
 import CampaignNFTABIData from '../abis/CampaignNFT.json'
 
 // TypeScript cast to ensure type safety
-const CampaignFactoryABI = CampaignFactoryABIData.abi as const
+const CampaignFactoryABI = CampaignFactoryABIData.abi as Abi
 const CampaignFactoryBytecode = CampaignFactoryABIData.bytecode
-const CampaignNFTABI = CampaignNFTABIData.abi as const
+const CampaignNFTABI = CampaignNFTABIData.abi as Abi
 const CampaignNFTBytecode = CampaignNFTABIData.bytecode
 
 export interface DeploymentState {
@@ -174,7 +173,8 @@ export function useContractDeployment() {
         address: nftAddress,
         abi: CampaignNFTABI,
         functionName: 'updateFactoryAddress',
-        args: [finalFactoryAddress]
+        args: [finalFactoryAddress],
+        chain: baseSepolia
       })
 
       await publicClient.waitForTransactionReceipt({
@@ -218,7 +218,8 @@ export function useContractDeployment() {
         address: finalFactoryAddress,
         abi: CampaignFactoryABI,
         functionName: 'createCampaign',
-        args: [account, goalInWei, token, campaignURI]
+        args: [account, goalInWei, token, campaignURI],
+        chain: baseSepolia
       })
 
       console.log("Campaign creation transaction sent:", createCampaignTxHash);
