@@ -215,7 +215,7 @@ export function DeployManagedCampaign() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          smartAccountAddress: smartAccount.smartAccountAddress,
+          smartAccountAddress: smartAccount?.smartAccountAddress || '',
           network: 'base-sepolia',
           calls: [userOperation],
           ownerAddress // Include the owner address

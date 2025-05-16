@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { type Address, type Hash } from 'viem'
 import { useWalletClient, usePublicClient } from 'wagmi'
 import { baseSepolia } from 'wagmi/chains'
+import type { WriteContractParameters } from '@wagmi/core'
 
 // Import ABIs directly from JSON
 // Note: Make sure these files have been properly copied over
@@ -10,9 +11,9 @@ import CampaignFactoryABIData from '../abis/CampaignFactory.json'
 import CampaignNFTABIData from '../abis/CampaignNFT.json'
 
 // TypeScript cast to ensure type safety
-const CampaignFactoryABI = CampaignFactoryABIData.abi
+const CampaignFactoryABI = CampaignFactoryABIData.abi as const
 const CampaignFactoryBytecode = CampaignFactoryABIData.bytecode
-const CampaignNFTABI = CampaignNFTABIData.abi
+const CampaignNFTABI = CampaignNFTABIData.abi as const
 const CampaignNFTBytecode = CampaignNFTABIData.bytecode
 
 export interface DeploymentState {
