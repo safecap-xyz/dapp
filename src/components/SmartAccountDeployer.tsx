@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useWallet } from '../web3/hooks/useWallet'
 import { useUserOp } from '../web3/services/UserOpService'
-import { NetworkSwitcher } from './NetworkSwitcher'
-import { Typography } from './ui'
 import config from '../config'
 import { type Address } from 'viem'
-import { type UserOpCall } from '../web3/services/UserOpService'
+import { NetworkSwitcher } from './NetworkSwitcher'
+import { Typography } from './ui'
 
 interface SmartAccount {
   smartAccountAddress: string;
@@ -13,73 +12,53 @@ interface SmartAccount {
   network: string;
 }
 
-interface UserOpServiceReturn {
-  createNFTCallData: (factoryAddress: Address, ownerAddress: Address) => UserOpCall
-  createFinalFactoryCallData: (nftAddress: Address, ownerAddress: Address) => UserOpCall
-  createUpdateNFTCallData: (nftAddress: Address, factoryAddress: Address) => UserOpCall
-  createCampaignCallData: (factoryAddress: Address, creatorAddress: Address, campaignDetails: CampaignDetails) => UserOpCall
-  sendUserOp: (smartAccountAddress: Address, network: string, calls: UserOpCall[]) => Promise<{ userOpHash: string, transactionHash?: string }>
-  deployContractsViaUserOp: (smartAccountAddress: Address, ownerAddress: Address, network: string, campaignDetails: CampaignDetails) => Promise<{ userOpHash: string, transactionHash?: string }>
-  reset: () => void
-}
+
 
 interface CampaignDetails {
   name: string
   description: string
-  goal: string
-  duration: string
+  goal: number
+  duration: number
 }
 
 export function SmartAccountDeployer() {
   const { isConnected, address } = useWallet()
   const userOp = useUserOp()
+  const { userOpHash, transactionHash } = userOp
 
   // State for selected smart account
   const [selectedAccount, setSelectedAccount] = useState<SmartAccount | null>(null)
   const [smartAccounts, setSmartAccounts] = useState<SmartAccount[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [campaignName, setCampaignName] = useState('')
   const [campaignGoal, setCampaignGoal] = useState('1.0')
   const [campaignDescription, setCampaignDescription] = useState('')
   const [campaignDuration, setCampaignDuration] = useState('30')
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
 
   // Fetch smart accounts when connected
+  const fetchSmartAccounts = useCallback(async (address: string) => {
+    if (!address) return
+
+    try {
+      setError('')
+      const response = await fetch(`${config.apiBaseUrl}/smart-accounts/${address}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch smart accounts')
+      }
+      const accounts = await response.json()
+      setSmartAccounts(accounts)
+    } catch (err) {
+      setError('Failed to fetch smart accounts')
+    }
+  }, [setSmartAccounts, setError])
+
   useEffect(() => {
     if (isConnected && address) {
       fetchSmartAccounts(address)
     }
   }, [isConnected, address, fetchSmartAccounts])
-
-  const fetchSmartAccounts = useCallback(async (address: string) => {
-    if (!address) return
-
-    try {
-      setLoading(true)
-      setError('')
-
-      const response = await fetch(`${config.apiBaseUrl}/api/smart-accounts?ownerAddress=${address}`)
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch smart accounts')
-      }
-
-      const data = await response.json()
-
-      if (data.smartAccounts && data.smartAccounts.length > 0) {
-        setSmartAccounts(data.smartAccounts)
-        setSelectedAccount(data.smartAccounts[0])
-      } else {
-        setError('No smart accounts found for this address')
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred while fetching smart accounts'
-      setError(errorMessage)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
 
   const createNewSmartAccount = async () => {
     if (!address) return
@@ -123,37 +102,35 @@ export function SmartAccountDeployer() {
     }
   }
 
-  const deployContracts = async () => {
+  const deployContracts = useCallback(async () => {
     if (!selectedAccount || !address) return
 
     try {
-      setLoading(true)
       setError('')
       setSuccess('')
-
       const campaignDetails: CampaignDetails = {
         name: campaignName,
+        goal: parseFloat(campaignGoal),
         description: campaignDescription,
-        goal: campaignGoal,
-        duration: campaignDuration
+        duration: parseInt(campaignDuration)
       }
 
-      // Deploy contracts via user operation
       const result = await userOp.deployContractsViaUserOp(
-        selectedAccount.smartAccountAddress as `0x${string}`,
-        address as `0x${string}`,
+        selectedAccount.smartAccountAddress as Address,
+        address as Address,
         'base-sepolia',
-        campaignDetails
+        { ...campaignDetails, goal: campaignDetails.goal.toString() }
       )
 
-      setSuccess(`Contract deployment initiated! UserOpHash: ${result.userOpHash}`)
+      if (result.userOpHash) {
+        setSuccess('Contracts deployed successfully!')
+      } else {
+        setError('Failed to deploy contracts')
+      }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred while deploying contracts'
-      setError(errorMessage)
-    } finally {
-      setLoading(false)
+      setError(err instanceof Error ? err.message : 'Unknown error')
     }
-  }
+  }, [selectedAccount, address, campaignName, campaignGoal, campaignDescription, campaignDuration, userOp])
 
   if (!isConnected) {
     return (
@@ -280,9 +257,9 @@ export function SmartAccountDeployer() {
 
             <div className="pt-4">
               <button
+                disabled={loading || !campaignName || !campaignGoal || !campaignDescription || !campaignDuration}
+                className="w-full py-2 px-4 bg-primary-main hover:bg-primary-dark text-white rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={deployContracts}
-                className="w-full px-4 py-3 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon disabled:opacity-50"
-                disabled={loading || !campaignName || !fundingGoal || !campaignDescription || !campaignDuration}
               >
                 {loading ? 'Deploying...' : 'Deploy Contracts via Smart Account'}
               </button>
@@ -300,17 +277,15 @@ export function SmartAccountDeployer() {
         {success && (
           <div className="mt-4 p-3 bg-success-main/20 rounded-lg border border-success-main/30">
             <p className="text-success-main">{success}</p>
-            {userOp.userOpHash && (
-              <div className="mt-4">
-                <p className="text-text-primary mb-2"><span className="font-medium">UserOp Hash:</span> {userOp.userOpHash}</p>
-                <a href={`https://basescan.org/tx/${userOp.transactionHash || userOp.userOpHash}`} 
-                   target="_blank" 
-                   rel="noopener noreferrer" 
-                   className="text-primary hover:underline">
-                  View on BaseScan
-                </a>
-              </div>
-            )}
+            <div className="mt-4">
+              <p className="text-text-primary mb-2"><span className="font-medium">UserOp Hash:</span> {userOpHash}</p>
+              <a href={`https://basescan.org/tx/${transactionHash || userOpHash}`} 
+                 target="_blank" 
+                 rel="noopener noreferrer" 
+                 className="text-primary hover:underline">
+                View on BaseScan
+              </a>
+            </div>
           </div>
         )}
       </div>

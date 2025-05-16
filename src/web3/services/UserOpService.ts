@@ -1,88 +1,50 @@
 import { useCallback, useState } from 'react'
-import { type Address, encodeFunctionData } from 'viem'
-import { usePublicClient } from 'wagmi'
+import { Address, Abi, encodeFunctionData, createPublicClient, http, type TransactionReceipt } from 'viem'
 import config from '../../config'
-
-// Import ABIs
 import CampaignFactoryABIData from '../abis/CampaignFactory.json'
 import CampaignNFTABIData from '../abis/CampaignNFT.json'
+import type { CampaignDetails, UserOpCall, UserOpResponse, UserOpServiceState, UserOpServiceReturn } from '../../types'
 
-// TypeScript cast to ensure type safety
-const CampaignFactoryBytecode = CampaignFactoryABIData.bytecode
-const CampaignNFTBytecode = CampaignNFTABIData.bytecode
+export function useUserOp(): UserOpServiceReturn {
+  const [state, setState] = useState<UserOpServiceState>({
+    isLoading: false,
+    isSuccess: false,
+    isError: false,
+    userOpHash: '',
+    transactionHash: '0x0000000000000000000000000000000000000000' as Address,
+    error: null
+  })
 
-export interface UserOpCall {
-  to: string;
-  value: string;
-  data: string;
-}
-
-export interface UserOpResponse {
-  userOpHash: string;
-  transactionHash?: string;
-}
-
-export interface UserOpState {
-  isLoading: boolean;
-  isSuccess: boolean;
-  isError: boolean;
-  userOpHash?: string;
-  transactionHash?: string;
-  error: Error | null;
-}
-
-export interface CampaignDetails {
-  name: string;
-  description: string;
-  goal: string; // in ETH
-  duration: string; // in days
-}
-
-const initialState: UserOpState = {
-  isLoading: false,
-  isSuccess: false,
-  isError: false,
-  userOpHash: undefined,
-  transactionHash: undefined,
-  error: null
-}
-
-/**
- * Hook for preparing UserOp data and sending it to the API
- */
-export function useUserOp() {
-  const [state, setState] = useState<UserOpState>(initialState)
-  const publicClient = usePublicClient()
+  const publicClient = createPublicClient({
+    chain: {
+      id: 11297108109,
+      name: 'Base Sepolia',
+      network: 'base-sepolia',
+      nativeCurrency: {
+        decimals: 18,
+        name: 'Base Sepolia ETH',
+        symbol: 'ETH'
+      },
+      rpcUrls: {
+        default: {
+          http: [config.apiBaseUrl]
+        }
+      }
+    },
+    transport: http(config.apiBaseUrl)
+  })
 
   /**
    * Creates call data for deploying a temporary factory contract
    */
   const createTempFactoryCallData = useCallback((nftAddress: Address, ownerAddress: Address): UserOpCall => {
-    // Ensure bytecode has 0x prefix
-    let bytecode = CampaignFactoryBytecode;
-    if (!bytecode.startsWith('0x')) {
-      bytecode = `0x${bytecode}`;
-    }
-
-    // Get only the constructor arguments encoded (without function selector)
-    const encodedArgs = encodeFunctionData({
-      abi: [{
-        type: 'constructor',
-        inputs: [
-          { type: 'address', name: '_nftContract' },
-          { type: 'address', name: 'initialOwner' }
-        ]
-      }],
-      args: [nftAddress, ownerAddress]
-    }).slice(10); // Remove '0x' + function selector (8 chars)
-
-    // Combine bytecode and encoded arguments
-    const data = `${bytecode}${encodedArgs}`;
-
     return {
-      to: "0x0000000000000000000000000000000000000000", // For contract deployment, use zero address
-      value: "0",
-      data: data
+      to: '0x0000000000000000000000000000000000000000' as Address,
+      data: encodeFunctionData({
+        abi: CampaignFactoryABIData.abi as Abi,
+        functionName: 'deploy',
+        args: [nftAddress, ownerAddress]
+      })
     }
   }, [])
 
@@ -90,34 +52,13 @@ export function useUserOp() {
    * Creates call data for deploying an NFT contract
    */
   const createNFTCallData = useCallback((factoryAddress: Address, ownerAddress: Address): UserOpCall => {
-    const baseURI = "ipfs://"
-
-    // Ensure bytecode has 0x prefix
-    let bytecode = CampaignNFTBytecode;
-    if (!bytecode.startsWith('0x')) {
-      bytecode = `0x${bytecode}`;
-    }
-
-    // Get only the constructor arguments encoded (without function selector)
-    const encodedArgs = encodeFunctionData({
-      abi: [{
-        type: 'constructor',
-        inputs: [
-          { type: 'address', name: '_factoryAddress' },
-          { type: 'string', name: '_baseURI' },
-          { type: 'address', name: 'initialOwner' }
-        ]
-      }],
-      args: [factoryAddress, baseURI, ownerAddress]
-    }).slice(10); // Remove '0x' + function selector (8 chars)
-
-    // Combine bytecode and encoded arguments
-    const data = `${bytecode}${encodedArgs}`;
-
     return {
-      to: "0x0000000000000000000000000000000000000000", // For contract deployment, use zero address
-      value: "0",
-      data: data
+      to: '0x0000000000000000000000000000000000000000' as Address,
+      data: encodeFunctionData({
+        abi: CampaignNFTABIData.abi as Abi,
+        functionName: 'deploy',
+        args: [factoryAddress, ownerAddress]
+      })
     }
   }, [])
 
@@ -125,81 +66,41 @@ export function useUserOp() {
    * Creates call data for deploying the final factory contract
    */
   const createFinalFactoryCallData = useCallback((nftAddress: Address, ownerAddress: Address): UserOpCall => {
-    // Ensure bytecode has 0x prefix
-    let bytecode = CampaignFactoryBytecode;
-    if (!bytecode.startsWith('0x')) {
-      bytecode = `0x${bytecode}`;
-    }
-
-    // Get only the constructor arguments encoded (without function selector)
-    const encodedArgs = encodeFunctionData({
-      abi: [{
-        type: 'constructor',
-        inputs: [
-          { type: 'address', name: '_nftContract' },
-          { type: 'address', name: 'initialOwner' }
-        ]
-      }],
-      args: [nftAddress, ownerAddress]
-    }).slice(10); // Remove '0x' + function selector (8 chars)
-
-    // Combine bytecode and encoded arguments
-    const data = `${bytecode}${encodedArgs}`;
-
     return {
-      to: "0x0000000000000000000000000000000000000000", // For contract deployment, use zero address
-      value: "0",
-      data: data
+      to: '0x0000000000000000000000000000000000000000' as Address,
+      data: encodeFunctionData({
+        abi: CampaignFactoryABIData.abi as Abi,
+        functionName: 'deploy',
+        args: [nftAddress, ownerAddress]
+      })
     }
   }, [])
 
   /**
-   * Creates call data for updating the NFT contract with the final factory address
+   * Creates call data for updating the NFT contract
    */
   const createUpdateNFTCallData = useCallback((nftAddress: Address, factoryAddress: Address): UserOpCall => {
     return {
-      to: nftAddress,
-      value: "0",
+      to: nftAddress as Address,
       data: encodeFunctionData({
-        abi: CampaignNFTABIData.abi,
-        functionName: 'updateFactoryAddress',
+        abi: CampaignNFTABIData.abi as Abi,
+        functionName: 'setFactory',
         args: [factoryAddress]
       })
     }
   }, [])
 
   /**
-   * Creates call data for creating a campaign through the factory
+   * Creates call data for creating a campaign
    */
-  const createCampaignCallData = useCallback((
-    factoryAddress: Address,
-    creatorAddress: Address,
-    campaignDetails: CampaignDetails
-  ): UserOpCall => {
-    // Convert ETH to Wei (1 ETH = 10^18 Wei)
-    const goalInEth = campaignDetails.goal || '0.1'
-    const goalInWei = BigInt(Math.floor(parseFloat(goalInEth) * 1e18))
-
-    const token = '0x0000000000000000000000000000000000000000' // Using ETH
-
-    // Create a metadata object with all campaign details
-    const metadata = {
-      name: campaignDetails.name || 'Sample Campaign',
-      description: campaignDetails.description || 'A sample fundraising campaign',
-      duration: campaignDetails.duration || '30', // days
-      createdAt: new Date().toISOString()
-    }
-
-    // Encode the metadata as a JSON string and use it as the campaign URI
-    const campaignURI = `data:application/json,${encodeURIComponent(JSON.stringify(metadata))}`
-
+  const createCampaignCallData = useCallback((factoryAddress: Address, ownerAddress: Address, campaignDetails: CampaignDetails): UserOpCall => {
+    const { name, goal, description, duration } = campaignDetails
     return {
-      to: factoryAddress,
-      value: "0",
+      to: factoryAddress as Address,
       data: encodeFunctionData({
-        abi: CampaignFactoryABIData.abi,
+        abi: CampaignFactoryABIData.abi as Abi,
         functionName: 'createCampaign',
-        args: [creatorAddress, goalInWei, token, campaignURI]
+        args: [ownerAddress, name, goal, description, duration]
       })
     }
   }, [])
@@ -207,27 +108,11 @@ export function useUserOp() {
   /**
    * Sends a UserOp to the API
    */
-  const sendUserOp = useCallback(async (
-    smartAccountAddress: Address,
-    network: string,
-    calls: UserOpCall[]
-  ): Promise<UserOpResponse> => {
-    setState({ ...initialState, isLoading: true })
-
-    console.log('Preparing to send UserOp to:', smartAccountAddress);
-    console.log('Network:', network);
-    console.log('Calls:', JSON.stringify(calls, null, 2));
+  const sendUserOp = useCallback(async (smartAccountAddress: Address, network: string, calls: UserOpCall[]): Promise<UserOpResponse> => {
+    setState(prev => ({ ...prev, isLoading: true, error: null }))
 
     try {
-      // Ensure all data fields are properly prefixed with 0x
-      const formattedCalls = calls.map(call => ({
-        ...call,
-        data: call.data.startsWith('0x') ? call.data : `0x${call.data}`
-      }));
-
-      console.log('Formatted calls:', JSON.stringify(formattedCalls, null, 2));
-
-      const response = await fetch(`${config.apiBaseUrl}/api/send-user-operation`, {
+      const response = await fetch(`${config.apiBaseUrl}/user-ops`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -235,119 +120,126 @@ export function useUserOp() {
         body: JSON.stringify({
           smartAccountAddress,
           network,
-          calls: formattedCalls
-        }),
+          calls
+        })
       })
 
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to send user operation')
+        throw new Error('Failed to send UserOp')
       }
 
       const data = await response.json()
-      console.log('UserOp response:', data);
-
-      const result = {
-        userOpHash: data.userOpHash,
-        transactionHash: data.transactionHash
+      setState(prev => ({ ...prev, isSuccess: true, userOpHash: data.userOpHash, transactionHash: data.transactionHash }))
+      return {
+        userOpHash: data.userOpHash as string,
+        transactionHash: data.transactionHash as Address
       }
-
-      setState({
-        isLoading: false,
-        isSuccess: true,
-        isError: false,
-        userOpHash: result.userOpHash,
-        transactionHash: result.transactionHash,
-        error: null
-      })
-
-      return result
-    } catch (error) {
-      console.error('Error sending UserOp:', error);
-      const errorMessage = error instanceof Error ? error : new Error(String(error))
-      setState({
-        isLoading: false,
-        isSuccess: false,
-        isError: true,
-        error: errorMessage
-      })
-
-      throw errorMessage
+    } catch (err) {
+      setState(prev => ({ ...prev, isError: true, error: err instanceof Error ? err : new Error('Unknown error') }))
+      throw err
+    } finally {
+      setState(prev => ({ ...prev, isLoading: false }))
     }
   }, [])
 
   /**
-   * Helper function to deploy contracts via UserOp
+   * Deploys contracts via UserOp
    */
-  const deployContractsViaUserOp = useCallback(async (
-    smartAccountAddress: Address,
-    ownerAddress: Address,
-    network: string,
-    campaignDetails: CampaignDetails
-  ) => {
-    setState({ ...initialState, isLoading: true })
-
-    // We'll simulate a multi-step deployment by preparing all the call data
-    // In a real implementation, we would need to perform these steps sequentially,
-    // waiting for each transaction to complete before preparing the next call.
-
-    // For this example, we'll just simulate one step of the process:
-    // Deploying a single factory contract
+  const deployContractsViaUserOp = useCallback(async (smartAccountAddress: Address, ownerAddress: Address, network: string, campaignDetails: CampaignDetails): Promise<UserOpResponse> => {
+    setState(prev => ({ ...prev, isLoading: true, error: null }))
 
     try {
-      const zeroAddress = '0x0000000000000000000000000000000000000000' as Address
+      // First, deploy the NFT contract
+      const nftCall = createNFTCallData(smartAccountAddress, ownerAddress)
 
-      // Prepare call data for deploying a factory contract
-      const factoryCallData = createTempFactoryCallData(zeroAddress, ownerAddress)
+      // Send UserOp for NFT deployment
+      const nftResponse = await sendUserOp(smartAccountAddress, network, [nftCall])
 
-      console.log('Smart account address:', smartAccountAddress);
-      console.log('Network:', network);
-      console.log('Factory call data:', factoryCallData);
-
-      // Make sure data is properly formatted for deployment
-      if (!factoryCallData.data || factoryCallData.data === '0x') {
-        throw new Error('Contract bytecode is empty or malformed');
+      // Wait for the transaction to confirm
+      if (!nftResponse.transactionHash) {
+        throw new Error('NFT deployment transaction hash not available')
       }
 
-      // Send the UserOp
-      const result = await sendUserOp(smartAccountAddress, network, [factoryCallData])
+      // Wait for the transaction to be mined
+      const nftReceipt = await publicClient.waitForTransactionReceipt({
+        hash: nftResponse.transactionHash as Address
+      }) as TransactionReceipt
 
-      return result
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error : new Error(String(error))
-      setState({
-        isLoading: false,
-        isSuccess: false,
-        isError: true,
-        error: errorMessage
-      })
+      // Get the NFT contract address from the receipt
+      const nftAddress = nftReceipt.contractAddress as Address
+      if (!nftAddress) {
+        throw new Error('NFT contract address not found in receipt')
+      }
 
-      throw errorMessage
+      // Deploy the final factory contract
+      const factoryCall = createFinalFactoryCallData(nftAddress, ownerAddress)
+
+      // Send UserOp for factory deployment
+      const factoryResponse = await sendUserOp(smartAccountAddress, network, [factoryCall])
+
+      // Wait for the transaction to confirm
+      if (!factoryResponse.transactionHash) {
+        throw new Error('Factory deployment transaction hash not available')
+      }
+
+      // Wait for the transaction to be mined
+      const factoryReceipt = await publicClient.waitForTransactionReceipt({
+        hash: factoryResponse.transactionHash as Address
+      }) as TransactionReceipt
+
+      // Get the factory contract address from the receipt
+      const factoryAddress = factoryReceipt.contractAddress as Address
+      if (!factoryAddress) {
+        throw new Error('Factory contract address not found in receipt')
+      }
+
+      // Update the NFT contract with the factory address
+      const updateCall = createUpdateNFTCallData(nftAddress, factoryAddress)
+
+      // Send UserOp for NFT update
+      const updateResponse = await sendUserOp(smartAccountAddress, network, [updateCall])
+
+      // Wait for the transaction to confirm
+      if (!updateResponse.transactionHash) {
+        throw new Error('NFT update transaction hash not available')
+      }
+
+      // Create the campaign
+      const campaignCall = createCampaignCallData(factoryAddress, ownerAddress, campaignDetails)
+
+      // Send UserOp for campaign creation
+      const campaignResponse = await sendUserOp(smartAccountAddress, network, [campaignCall])
+
+      setState(prev => ({ ...prev, isSuccess: true, userOpHash: campaignResponse.userOpHash, transactionHash: campaignResponse.transactionHash }))
+      return campaignResponse
+    } catch (err) {
+      setState(prev => ({ ...prev, isError: true, error: err instanceof Error ? err : new Error('Unknown error') }))
+      throw err
+    } finally {
+      setState(prev => ({ ...prev, isLoading: false }))
     }
-  }, [createTempFactoryCallData, sendUserOp])
+  }, [createNFTCallData, createFinalFactoryCallData, createUpdateNFTCallData, createCampaignCallData, sendUserOp, publicClient])
 
   const reset = useCallback(() => {
-    setState(initialState)
+    setState({
+      isLoading: false,
+      isSuccess: false,
+      isError: false,
+      userOpHash: '',
+      transactionHash: '0x0000000000000000000000000000000000000000' as Address,
+      error: null
+    })
   }, [])
 
-  interface UserOpServiceReturn {
-    createNFTCallData: (factoryAddress: Address, ownerAddress: Address) => UserOpCall
-    createFinalFactoryCallData: (nftAddress: Address, ownerAddress: Address) => UserOpCall
-    createUpdateNFTCallData: (nftAddress: Address, factoryAddress: Address) => UserOpCall
-    createCampaignCallData: (factoryAddress: Address, creatorAddress: Address, campaignDetails: CampaignDetails) => UserOpCall
-    sendUserOp: (smartAccountAddress: Address, network: string, calls: UserOpCall[]) => Promise<UserOpResponse>
-    deployContractsViaUserOp: (smartAccountAddress: Address, ownerAddress: Address, network: string, campaignDetails: CampaignDetails) => Promise<UserOpResponse>
-    reset: () => void
-  }
-
   return {
-    ...state,
+    createTempFactoryCallData,
     createNFTCallData,
     createFinalFactoryCallData,
     createUpdateNFTCallData,
     createCampaignCallData,
     sendUserOp,
     deployContractsViaUserOp,
-    reset
-  } as UserOpServiceReturn
+    reset,
+    ...state
+  }
 }

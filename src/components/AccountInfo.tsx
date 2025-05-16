@@ -32,9 +32,9 @@ export function AccountInfo() {
         )}
         <div className="flex justify-between items-center">
           <span className="font-medium font-primary text-text-primary">Network:</span>
-          <span className={isSepoliaNetwork ? "text-success-main" : "text-warning-main font-primary"}>
-            {isSepoliaNetwork ? "Sepolia Testnet" : `Chain ID: ${chainId || 'Unknown'}`}
-            {!isSepoliaNetwork && ' (Please switch to Sepolia)'}
+          <span className={isBaseSepoliaNetwork ? "text-success-main" : "text-warning-main font-primary"}>
+            {isBaseSepoliaNetwork ? "Sepolia Testnet" : `Chain ID: ${chainId || 'Unknown'}`}
+            {!isBaseSepoliaNetwork && ' (Please switch to Sepolia)'}
           </span>
         </div>
       </div>
