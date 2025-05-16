@@ -3,12 +3,14 @@ import { useState } from 'react'
 import { WalletConnect } from './components/WalletConnect'
 import { AccountInfo } from './components/AccountInfo'
 import { DeployContracts } from './components/DeployContracts'
-import { DeployManagedCampaign } from './components/DeployManagedCampaign'
 import { SmartAccountDeployer } from './components/SmartAccountDeployer'
 import { SmartAccountTester } from './components/SmartAccountTester'
 import { CampaignList } from './components/CampaignList'
 import { ThemeProvider } from './theme/ThemeProvider'
 import { Typography } from './components/ui'
+import TestContractDeployment from './components/TestContractDeployment'
+// Import DeployManagedCampaign as default export
+import DeployManagedCampaign from './components/DeployManagedCampaign'
 
 function App() {
   const [currentNav, setCurrentNav] = useState('home');
@@ -52,6 +54,10 @@ function App() {
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'donate' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('donate')}>
                   Donate
+                </li>
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'testDeploy' ? 'border-b-2 border-accent-main' : ''}`}
+                    onClick={() => handleNavClick('testDeploy')}>
+                  Test Deploy
                 </li>
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'about' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('about')}>
@@ -161,6 +167,16 @@ function App() {
                 </div>
               )}
 
+              {currentNav === 'testDeploy' && (
+                <div>
+                  <Typography variant="h1" className="mb-6 glow-text">Contract Deployment Tester</Typography>
+                  <Typography variant="body1" className="mb-6">
+                    This tool allows you to test contract deployments with detailed logging to help diagnose issues.
+                  </Typography>
+                  <TestContractDeployment />
+                </div>
+              )}
+              
               {/* {currentNav === 'showcase' && (
                 <div>
                   <Typography variant="h1" className="mb-6 glow-text">UI Component Showcase</Typography>
