@@ -1,7 +1,7 @@
 import { useWallet } from '../web3/hooks/useWallet'
 
 export function AccountInfo() {
-  const { isConnected, displayName, balance, address, chainId, isSepoliaNetwork } = useWallet()
+  const { isConnected, displayName, balance, address, chainId, isBaseSepoliaNetwork } = useWallet()
 
   if (!isConnected || !address) {
     return (
@@ -14,6 +14,10 @@ export function AccountInfo() {
   return (
     <div className="rounded-lg">
       <div className="space-y-3">
+        <div className={`flex items-center gap-2 ${isBaseSepoliaNetwork ? 'bg-warning/20' : 'bg-success/20'} p-3 rounded-lg`}>
+          <span className="text-sm font-medium ">{isBaseSepoliaNetwork ? 'Sepolia Testnet' : 'Mainnet'}</span>
+          <span className="text-xs text-text-secondary">{isBaseSepoliaNetwork ? '(Test)' : '(Main)'}</span>
+        </div>
         <div className="flex justify-between items-center">
           <span className="font-medium font-primary text-text-primary">Address:</span>
           <span className="font-mono text-secondary-light truncate max-w-[200px]">{displayName}</span>
@@ -28,9 +32,9 @@ export function AccountInfo() {
         )}
         <div className="flex justify-between items-center">
           <span className="font-medium font-primary text-text-primary">Network:</span>
-          <span className={isSepoliaNetwork ? "text-success-main" : "text-warning-main font-primary"}>
-            {isSepoliaNetwork ? "Sepolia Testnet" : `Chain ID: ${chainId || 'Unknown'}`}
-            {!isSepoliaNetwork && ' (Please switch to Sepolia)'}
+          <span className={isBaseSepoliaNetwork ? "text-success-main" : "text-warning-main font-primary"}>
+            {isBaseSepoliaNetwork ? "Sepolia Testnet" : `Chain ID: ${chainId || 'Unknown'}`}
+            {!isBaseSepoliaNetwork && ' (Please switch to Sepolia)'}
           </span>
         </div>
       </div>

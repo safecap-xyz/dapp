@@ -4,7 +4,7 @@ import { useWallet } from '../web3/hooks/useWallet'
 import { NetworkSwitcher } from './NetworkSwitcher'
 
 export function DeployContracts() {
-  const { isConnected, isSepoliaNetwork } = useWallet()
+  const { isConnected, isBaseSepoliaNetwork } = useWallet()
   
   const {
     isDeploying,
@@ -65,7 +65,7 @@ export function DeployContracts() {
 
   return (
     <div className="p-4 bg-primary-dark/30 rounded-lg border border-secondary-main/30">
-      <h2 className="text-xl font-bold text-text-primary mb-4 font-secondary">Deploy Contracts on Sepolia Testnet</h2>
+      <h2 className="text-xl font-bold text-text-primary mb-4 font-secondary">Deploy Contracts on Base Sepolia Testnet</h2>
       
       {isConnected && <NetworkSwitcher />}
 
@@ -81,13 +81,13 @@ export function DeployContracts() {
               <button
                 onClick={() => setShowForm(true)}
                 className="px-4 py-2 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon"
-                disabled={!isSepoliaNetwork}
+                disabled={!isBaseSepoliaNetwork}
               >
                 Create New Campaign
               </button>
-              {!isSepoliaNetwork && (
+              {!isBaseSepoliaNetwork && (
                 <p className="mt-2 text-sm text-error-main">
-                  Please switch to the Sepolia network using the network switcher above before creating a campaign.
+                  Please switch to the Base Sepolia network using the network switcher above before creating a campaign.
                 </p>
               )}
             </div>

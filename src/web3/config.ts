@@ -1,5 +1,5 @@
 import { http, createConfig } from 'wagmi'
-import { mainnet, sepolia } from 'wagmi/chains'
+import { mainnet, baseSepolia } from 'wagmi/chains'
 import { injected, coinbaseWallet, walletConnect } from 'wagmi/connectors'
 
 // Detect if MetaMask is available
@@ -13,10 +13,10 @@ console.log('MetaMask installed detection:', metaMaskInstalled)
 
 // Configure chains & providers
 export const config = createConfig({
-  chains: [sepolia, mainnet],
+  chains: [baseSepolia, mainnet],
   transports: {
     [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [baseSepolia.id]: http(),
   },
   connectors: [
     // Include injected connector first for broader compatibility

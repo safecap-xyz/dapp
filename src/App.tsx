@@ -3,9 +3,14 @@ import { useState } from 'react'
 import { WalletConnect } from './components/WalletConnect'
 import { AccountInfo } from './components/AccountInfo'
 import { DeployContracts } from './components/DeployContracts'
+import { SmartAccountDeployer } from './components/SmartAccountDeployer'
+import { SmartAccountTester } from './components/SmartAccountTester'
 import { CampaignList } from './components/CampaignList'
 import { ThemeProvider } from './theme/ThemeProvider'
 import { Typography } from './components/ui'
+import TestContractDeployment from './components/TestContractDeployment'
+// Import DeployManagedCampaign as default export
+import DeployManagedCampaign from './components/DeployManagedCampaign'
 
 function App() {
   const [currentNav, setCurrentNav] = useState('home');
@@ -21,7 +26,7 @@ function App() {
         <div className="bg-primary-main h-16 text-white flex items-center justify-between px-4 shadow-neon">
           <div className="flex items-center">
             <div className="font-secondary font-bold text-2xl glow-text">SafeCap</div>
-            <div className="ml-2 text-sm bg-accent-main text-accent-contrast px-2 py-0.5 rounded-full font-medium">Sepolia Testnet</div>
+            <div className="ml-2 text-sm bg-accent-main text-accent-contrast px-2 py-0.5 rounded-full font-medium">Base Sepolia Testnet</div>
           </div>
           <div className="flex items-center space-x-6">
             <nav>
@@ -32,11 +37,27 @@ function App() {
                 </li>
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deploy' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('deploy')}>
-                  Deploy
+                  Deploy EOA
+                </li>
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deployT' ? 'border-b-2 border-accent-main' : ''}`}
+                    onClick={() => handleNavClick('deployT')}>
+                  Deploy Managed
+                </li>
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'smartAccount' ? 'border-b-2 border-accent-main' : ''}`}
+                    onClick={() => handleNavClick('smartAccount')}>
+                  Smart Account
+                </li>
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'tester' ? 'border-b-2 border-accent-main' : ''}`}
+                    onClick={() => handleNavClick('tester')}>
+                  SmartOp Tester
                 </li>
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'donate' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('donate')}>
                   Donate
+                </li>
+                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'testDeploy' ? 'border-b-2 border-accent-main' : ''}`}
+                    onClick={() => handleNavClick('testDeploy')}>
+                  Test Deploy
                 </li>
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'about' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('about')}>
@@ -80,9 +101,39 @@ function App() {
               {currentNav === 'deploy' && (
                 <div>
                   <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Deploy Contracts</h1>
-                  <p className="mb-6 text-text-primary font-primary">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</p>
+                  <p className="mb-6 text-text-primary font-primary">Deploy the SafeCap smart contracts to the Base Sepolia testnet for testing and development.</p>
                   <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
                     <DeployContracts />
+                  </div>
+                </div>
+              )}
+
+              {currentNav === 'deployT' && (
+                <div>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Deploy Managed Campaign</h1>
+                  <p className="mb-6 text-text-primary font-primary">Deploy a managed campaign using account abstraction and smart accounts.</p>
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
+                    <DeployManagedCampaign />
+                  </div>
+                </div>
+              )}
+
+              {currentNav === 'smartAccount' && (
+                <div>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Smart Account Deployment</h1>
+                  <p className="mb-6 text-text-primary font-primary">Deploy campaigns using a smart account with UserOp for gasless transactions.</p>
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
+                    <SmartAccountDeployer />
+                  </div>
+                </div>
+              )}
+
+              {currentNav === 'tester' && (
+                <div>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Smart Account Operation Tester</h1>
+                  <p className="mb-6 text-text-primary font-primary">Test smart account operations with simple UserOp transactions.</p>
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
+                    <SmartAccountTester />
                   </div>
                 </div>
               )}
@@ -116,6 +167,16 @@ function App() {
                 </div>
               )}
 
+              {currentNav === 'testDeploy' && (
+                <div>
+                  <Typography variant="h1" className="mb-6 glow-text">Contract Deployment Tester</Typography>
+                  <Typography variant="body1" className="mb-6">
+                    This tool allows you to test contract deployments with detailed logging to help diagnose issues.
+                  </Typography>
+                  <TestContractDeployment />
+                </div>
+              )}
+              
               {/* {currentNav === 'showcase' && (
                 <div>
                   <Typography variant="h1" className="mb-6 glow-text">UI Component Showcase</Typography>
