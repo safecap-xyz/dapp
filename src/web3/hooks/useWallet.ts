@@ -1,5 +1,5 @@
 import { useAccount, useBalance, useEnsName, useChainId } from 'wagmi'
-import { sepolia } from 'wagmi/chains'
+import { baseSepolia } from 'wagmi/chains'
 
 export function useWallet() {
   const { address, isConnected, connector } = useAccount()
@@ -10,7 +10,7 @@ export function useWallet() {
     address,
   })
   const chainId = useChainId()
-  const isSepoliaNetwork = chainId === sepolia.id
+  const isBaseSepoliaNetwork = chainId === baseSepolia.id
 
   return {
     address,
@@ -19,7 +19,7 @@ export function useWallet() {
     balance,
     ensName,
     chainId,
-    isSepoliaNetwork,
+    isBaseSepoliaNetwork,
     displayName: ensName || (address ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : ''),
   }
 }

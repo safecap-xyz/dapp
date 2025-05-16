@@ -24,7 +24,7 @@ function App() {
         <div className="bg-primary-main h-16 text-white flex items-center justify-between px-4 shadow-neon">
           <div className="flex items-center">
             <div className="font-secondary font-bold text-2xl glow-text">SafeCap</div>
-            <div className="ml-2 text-sm bg-accent-main text-accent-contrast px-2 py-0.5 rounded-full font-medium">Sepolia Testnet</div>
+            <div className="ml-2 text-sm bg-accent-main text-accent-contrast px-2 py-0.5 rounded-full font-medium">Base Sepolia Testnet</div>
           </div>
           <div className="flex items-center space-x-6">
             <nav>
@@ -95,7 +95,7 @@ function App() {
               {currentNav === 'deploy' && (
                 <div>
                   <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Deploy Contracts</h1>
-                  <p className="mb-6 text-text-primary font-primary">Deploy the SafeCap smart contracts to the Sepolia testnet for testing and development.</p>
+                  <p className="mb-6 text-text-primary font-primary">Deploy the SafeCap smart contracts to the Base Sepolia testnet for testing and development.</p>
                   <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30">
                     <DeployContracts />
                   </div>

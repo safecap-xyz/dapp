@@ -480,7 +480,7 @@ export function DeployManagedCampaign() {
           <div className="mt-4 p-3 bg-primary-dark/30 rounded-lg border border-secondary-main/30">
             <p className="text-text-primary mb-2"><span className="font-medium">Transaction Hash:</span> {transactionHash}</p>
             <a 
-              href={`https://sepolia.basescan.org/tx/${transactionHash}`}
+              href={`https://basescan.org/tx/${transactionHash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-secondary-main hover:text-secondary-light transition-colors"

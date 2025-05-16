@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { type Address, type Hash } from 'viem'
 import { useWalletClient, usePublicClient } from 'wagmi'
+import { baseSepolia } from 'wagmi/chains'
 
 // Import ABIs directly from JSON
 // Note: Make sure these files have been properly copied over
@@ -60,8 +61,8 @@ export interface CampaignDetails {
  */
 export function useContractDeployment() {
   const [deployState, setDeployState] = useState<DeploymentState>(initialState)
-  const { data: walletClient } = useWalletClient()
-  const publicClient = usePublicClient()
+  const { data: walletClient } = useWalletClient({ chainId: baseSepolia.id })
+  const publicClient = usePublicClient({ chainId: baseSepolia.id })
 
   const deployContracts = useCallback(async (campaignDetails?: CampaignDetails) => {
     if (!walletClient || !publicClient) {
