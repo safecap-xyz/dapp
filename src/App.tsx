@@ -39,11 +39,23 @@ function App() {
   };
   
   const handleNavItemClick = (key: string) => {
+    const rootDiv = document.querySelector('#root > div');
+    
+    // Toggle overflow-hidden on both #root > div and body when 'story' is selected/left
+    if (key === 'story') {
+      rootDiv?.classList.remove('overflow-hidden');
+      document.body.classList.remove('overflow-hidden');
+    } else if (currentNav === 'story') {
+      rootDiv?.classList.add('overflow-hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+    
     setCurrentNav(key);
     if (isMobile) {
       setIsMobileMenuOpen(false);
     }
   };
+
 
   return (
     <ThemeProvider>
