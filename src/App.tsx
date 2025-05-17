@@ -43,22 +43,22 @@ function App() {
                     onClick={() => handleNavClick('deployT')}>
                   Deploy Managed
                 </li>
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'smartAccount' ? 'border-b-2 border-accent-main' : ''}`}
+                {/* <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'smartAccount' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('smartAccount')}>
                   Smart Account
                 </li>
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'tester' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('tester')}>
                   SmartOp Tester
-                </li>
+                </li> */}
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'donate' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('donate')}>
                   Donate
                 </li>
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'testDeploy' ? 'border-b-2 border-accent-main' : ''}`}
+                {/* <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'testDeploy' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('testDeploy')}>
                   Test Deploy
-                </li>
+                </li> */}
                 <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'about' ? 'border-b-2 border-accent-main' : ''}`}
                     onClick={() => handleNavClick('about')}>
                   About
