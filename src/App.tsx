@@ -1,5 +1,6 @@
 import './App.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
+import { FiMenu, FiX } from 'react-icons/fi'; // Import icons from react-icons
 import { WalletConnect } from './components/WalletConnect'
 import { AccountInfo } from './components/AccountInfo'
 import { DeployContracts } from './components/DeployContracts'
@@ -14,9 +15,34 @@ import DeployManagedCampaign from './components/DeployManagedCampaign'
 
 function App() {
   const [currentNav, setCurrentNav] = useState('home');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const handleNavClick = (key: string) => {
+  // Check if screen is mobile size
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint in Tailwind
+    };
+    
+    // Initial check
+    checkIfMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+  
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+  
+  const handleNavItemClick = (key: string) => {
     setCurrentNav(key);
+    if (isMobile) {
+      setIsMobileMenuOpen(false);
+    }
   };
 
   return (
@@ -29,42 +55,44 @@ function App() {
             {/* <div className="ml-2 text-sm bg-accent-main text-accent-contrast px-2 py-0.5 rounded-full font-medium">Base Sepolia Testnet</div> */}
           </div>
           <div className="flex items-center space-x-6">
-            <nav>
-              <ul className="flex space-x-6 font-primary font-medium">
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'home' ? 'border-b-2 border-accent-main' : ''}`}
-                  onClick={() => handleNavClick('home')}>
-                  Home
-                </li>
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deploy' ? 'border-b-2 border-accent-main' : ''}`}
-                  onClick={() => handleNavClick('deploy')}>
-                  Deploy EOA
-                </li>
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deployT' ? 'border-b-2 border-accent-main' : ''}`}
-                  onClick={() => handleNavClick('deployT')}>
-                  Deploy Managed
-                </li>
-                {/* <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'smartAccount' ? 'border-b-2 border-accent-main' : ''}`}
-                    onClick={() => handleNavClick('smartAccount')}>
-                  Smart Account
-                </li>
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'tester' ? 'border-b-2 border-accent-main' : ''}`}
-                    onClick={() => handleNavClick('tester')}>
-                  SmartOp Tester
-                </li> */}
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'donate' ? 'border-b-2 border-accent-main' : ''}`}
-                  onClick={() => handleNavClick('donate')}>
-                  Donate
-                </li>
-                {/* <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'testDeploy' ? 'border-b-2 border-accent-main' : ''}`}
-                    onClick={() => handleNavClick('testDeploy')}>
-                  Test Deploy
-                </li> */}
-                <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'about' ? 'border-b-2 border-accent-main' : ''}`}
-                  onClick={() => handleNavClick('about')}>
-                  About
-                </li>
-              </ul>
-            </nav>
+            <div className="relative">
+              {/* Mobile menu button */}
+              {isMobile && (
+                <button 
+                  onClick={toggleMobileMenu}
+                  className="text-white p-2 hover:bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-main"
+                  aria-label="Toggle menu"
+                >
+                  {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+                </button>
+              )}
+              
+              {/* Navigation - shows as hamburger menu on mobile */}
+              <nav className={`${isMobile ? (isMobileMenuOpen ? 'block' : 'hidden') : 'block'}`}>
+                <ul className={`font-primary font-medium ${isMobile ? 'absolute right-0 mt-2 w-56 bg-gray-900 rounded-md shadow-lg py-3 z-50' : 'flex space-x-6'}`}>
+                  <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'home' ? 'border-b-2 border-accent-main' : ''} ${isMobile ? 'block px-6 py-2' : ''}`}
+                    onClick={() => handleNavItemClick('home')}>
+                    Home
+                  </li>
+                  <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deploy' ? 'border-b-2 border-accent-main' : ''} ${isMobile ? 'block px-6 py-2' : ''}`}
+                    onClick={() => handleNavItemClick('deploy')}>
+                    Deploy EOA
+                  </li>
+                  <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'deployT' ? 'border-b-2 border-accent-main' : ''} ${isMobile ? 'block px-6 py-2' : ''}`}
+                    onClick={() => handleNavItemClick('deployT')}>
+                    Deploy Managed
+                  </li>
+                  <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'donate' ? 'border-b-2 border-accent-main' : ''} ${isMobile ? 'block px-6 py-2' : ''}`}
+                    onClick={() => handleNavItemClick('donate')}>
+                    Donate
+                  </li>
+                  <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'about' ? 'border-b-2 border-accent-main' : ''} ${isMobile ? 'block px-6 py-2' : ''}`}
+                    onClick={() => handleNavItemClick('about')}>
+                    About
+                  </li>
+                </ul>
+              </nav>
+            </div>
             <WalletConnect />
           </div>
         </div>
@@ -207,51 +235,25 @@ function App() {
                   </div>
 
 
-
-                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30 mb-8">
-          <section className="content-full">
-            <div className="content-full-inner">
-              <Typography variant="h2" className="text-[46px] font-bold">The Future of Crowd-funding is Here.</Typography>
-            </div>
-          </section>
-          <section className="content-full bg-none">
-            <div className="content-full-inner">
-              <ul className="mt-6 space-y-4 text-left">
-                <li className="flex items-start">
-                  <span className="mr-2 text-blue-400">•</span>
-                  <span>Raise Funds Your Way: Accept ETH & ERC20 donations.</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-blue-400">•</span>
-                  <span>Reward Support with NFTs: Automatically mint unique digital collectibles for backers.</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-blue-400">•</span>
-                  <span>Transparent & Secure: Powered by audited smart contracts on the blockchain.</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-blue-400">•</span>
-                  <span>All-or-Nothing Funding: Creator receives funds only if the goal is met.</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 text-blue-400">•</span>
-                  <span>On-Chain Tracking: Verifiable progress and donation history.</span>
-                </li>
-              </ul>
-            </div>
-          </section>
-          </div>
-
-
                   <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30 mb-8">
                     <Typography variant="h3" className="mb-4">How It Works</Typography>
                     <div className="cyber-line w-full my-3"></div>
-                    <div className="space-y-4">
-                      <p><span className="text-secondary-main font-bold">1. Create a Campaign</span> - Launch your funding campaign with just a few clicks.</p>
-                      <p><span className="text-secondary-main font-bold">2. Share Your Campaign</span> - Get your unique campaign link and share it with potential donors.</p>
-                      <p><span className="text-secondary-main font-bold">3. Collect Donations</span> - Donors connect their wallets and contribute ETH to your campaign.</p>
-                      <p><span className="text-secondary-main font-bold">4. Reach Your Goal</span> - Once your funding goal is reached, funds are released to your campaign wallet.</p>
-                      <p><span className="text-secondary-main font-bold">5. Withdraw Funds</span> - Transfer funds to your personal wallet or use our integrated services.</p>
+                    <div className="space-y-4 text-left">
+                      <Typography variant="body1">
+                        <span className="text-secondary-main font-bold">1. Create a Campaign</span> - Launch your funding campaign with just a few clicks.
+                      </Typography>
+                      <Typography variant="body1">
+                        <span className="text-secondary-main font-bold">2. Share Your Campaign</span> - Get your unique campaign link and share it with potential donors.
+                      </Typography>
+                      <Typography variant="body1">
+                        <span className="text-secondary-main font-bold">3. Collect Donations</span> - Donors connect their wallets and contribute ETH to your campaign.
+                      </Typography>
+                      <Typography variant="body1">
+                        <span className="text-secondary-main font-bold">4. Reach Your Goal</span> - Once your funding goal is reached, funds are released to your campaign wallet.
+                      </Typography>
+                      <Typography variant="body1">
+                        <span className="text-secondary-main font-bold">5. Withdraw Funds</span> - Transfer funds to your personal wallet or use our integrated services.
+                      </Typography>
                     </div>
                   </div>
                 </div>
