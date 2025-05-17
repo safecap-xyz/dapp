@@ -86,6 +86,10 @@ function App() {
                     onClick={() => handleNavItemClick('donate')}>
                     Donate
                   </li>
+                  <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'story' ? 'border-b-2 border-accent-main' : ''} ${isMobile ? 'block px-6 py-2' : ''}`}
+                    onClick={() => handleNavItemClick('story')}>
+                    Story
+                  </li>
                   <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'about' ? 'border-b-2 border-accent-main' : ''} ${isMobile ? 'block px-6 py-2' : ''}`}
                     onClick={() => handleNavItemClick('about')}>
                     About
