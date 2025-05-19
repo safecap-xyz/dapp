@@ -1,4 +1,5 @@
 import { Address } from 'viem'
+import { ChainType } from './config'
 
 export interface CampaignDetails {
   name: string
@@ -27,8 +28,8 @@ export interface UserOpServiceReturn extends UserOpServiceState {
   createFinalFactoryCallData: (nftAddress: Address, ownerAddress: Address) => UserOpCall
   createUpdateNFTCallData: (nftAddress: Address, factoryAddress: Address) => UserOpCall
   createCampaignCallData: (factoryAddress: Address, ownerAddress: Address, campaignDetails: CampaignDetails) => UserOpCall
-  sendUserOp: (smartAccountAddress: Address, network: string, calls: UserOpCall[]) => Promise<UserOpResponse>
-  deployContractsViaUserOp: (smartAccountAddress: Address, ownerAddress: Address, network: string, campaignDetails: CampaignDetails) => Promise<UserOpResponse>
+  sendUserOp: (smartAccountAddress: Address, network: ChainType, calls: UserOpCall[]) => Promise<UserOpResponse>
+  deployCampaign: (smartAccountAddress: Address, ownerAddress: Address, campaignDetails: CampaignDetails, network?: ChainType) => Promise<UserOpResponse>
   reset: () => void
 }
 

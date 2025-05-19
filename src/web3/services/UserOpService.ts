@@ -1,11 +1,13 @@
 import { useCallback, useState } from 'react'
 import { Address, Abi, encodeFunctionData, createPublicClient, http, type TransactionReceipt } from 'viem'
-import config from '../../config'
+import config, { CHAINS } from '../../config'
 import CampaignFactoryABIData from '../abis/CampaignFactory.json'
 import CampaignNFTABIData from '../abis/CampaignNFT.json'
 import type { CampaignDetails, UserOpCall, UserOpResponse, UserOpServiceState, UserOpServiceReturn } from '../../types'
 
-export function useUserOp(): UserOpServiceReturn {
+type ChainType = keyof typeof CHAINS
+
+export function useUserOp(chainType: ChainType = 'base'): UserOpServiceReturn {
   const [state, setState] = useState<UserOpServiceState>({
     isLoading: false,
     isSuccess: false,
@@ -15,23 +17,10 @@ export function useUserOp(): UserOpServiceReturn {
     error: null
   })
 
+  const chain = CHAINS[chainType]
   const publicClient = createPublicClient({
-    chain: {
-      id: 11297108109,
-      name: 'Base Sepolia',
-      network: 'base-sepolia',
-      nativeCurrency: {
-        decimals: 18,
-        name: 'Base Sepolia ETH',
-        symbol: 'ETH'
-      },
-      rpcUrls: {
-        default: {
-          http: [config.apiBaseUrl]
-        }
-      }
-    },
-    transport: http(config.apiBaseUrl)
+    chain,
+    transport: http(chain.rpcUrls.default.http[0])
   })
 
   /**
@@ -108,20 +97,22 @@ export function useUserOp(): UserOpServiceReturn {
   /**
    * Sends a UserOp to the API
    */
-  const sendUserOp = useCallback(async (smartAccountAddress: Address, network: string, calls: UserOpCall[]): Promise<UserOpResponse> => {
+  const sendUserOp = useCallback(async (
+    smartAccountAddress: Address,
+    network: ChainType,
+    calls: UserOpCall[]
+  ): Promise<UserOpResponse> => {
     setState(prev => ({ ...prev, isLoading: true, error: null }))
 
     try {
-      const response = await fetch(`${config.apiBaseUrl}/user-ops`, {
+      const response = await fetch(`${config.apiBaseUrl}/api/send-user-operation`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           smartAccountAddress,
-          network,
+          network: network === 'base' ? 'base' : 'base-sepolia',
           calls
-        })
+        }),
       })
 
       if (!response.ok) {
@@ -145,7 +136,12 @@ export function useUserOp(): UserOpServiceReturn {
   /**
    * Deploys contracts via UserOp
    */
-  const deployContractsViaUserOp = useCallback(async (smartAccountAddress: Address, ownerAddress: Address, network: string, campaignDetails: CampaignDetails): Promise<UserOpResponse> => {
+  const deployCampaign = useCallback(async (
+    smartAccountAddress: Address,
+    ownerAddress: Address,
+    campaignDetails: CampaignDetails,
+    network: ChainType = 'base'
+  ): Promise<UserOpResponse> => {
     setState(prev => ({ ...prev, isLoading: true, error: null }))
 
     try {
@@ -238,7 +234,7 @@ export function useUserOp(): UserOpServiceReturn {
     createUpdateNFTCallData,
     createCampaignCallData,
     sendUserOp,
-    deployContractsViaUserOp,
+    deployCampaign,
     reset,
     ...state
   }
