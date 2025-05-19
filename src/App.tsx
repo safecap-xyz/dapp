@@ -39,17 +39,6 @@ function App() {
   };
   
   const handleNavItemClick = (key: string) => {
-    const rootDiv = document.querySelector('#root > div');
-    
-    // Toggle overflow-hidden on both #root > div and body when 'story' is selected/left
-    if (key === 'story') {
-      rootDiv?.classList.remove('overflow-hidden');
-      document.body.classList.remove('overflow-hidden');
-    } else if (currentNav === 'story') {
-      rootDiv?.classList.add('overflow-hidden');
-      document.body.classList.add('overflow-hidden');
-    }
-    
     setCurrentNav(key);
     if (isMobile) {
       setIsMobileMenuOpen(false);
@@ -191,7 +180,7 @@ function App() {
                   <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">About SafeCap</h1>
                   <p className="mb-6 text-text-primary font-primary">SafeCap is a decentralized crowdfunding platform built on blockchain technology that enables transparent, secure, and efficient fundraising for projects.</p>
 
-                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30 mb-8 max-w-[560px] mx-auto">
+                  <div className="glass-panel p-6 rounded-lg shadow-neon border border-secondary-main/30 mb-8 max-w-[560px] mx-auto !overflow-y-scroll max-h-[80vh]">
                     <Typography variant="h3" className="mb-4">SafeCap: Crowdfunding Without Permission</Typography>
                     <div className="cyber-line w-full my-3"></div>
                     <div className="prose max-w-none">
