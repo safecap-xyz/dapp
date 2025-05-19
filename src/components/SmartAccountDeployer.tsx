@@ -1,25 +1,20 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useWallet } from '../web3/hooks/useWallet'
 import { useUserOp } from '../web3/services/UserOpService'
-import config from '../config'
+import config, { CHAINS, ChainType } from '../config'
 import { type Address } from 'viem'
-import { NetworkSwitcher } from './NetworkSwitcher'
+import { CampaignDetails } from '../types'
 import { Typography } from './ui'
 
 interface SmartAccount {
   smartAccountAddress: string;
   ownerAddress: string;
-  network: string;
+  network: ChainType;
 }
 
 
 
-interface CampaignDetails {
-  name: string
-  description: string
-  goal: number
-  duration: number
-}
+// CampaignDetails is now imported from types
 
 export function SmartAccountDeployer() {
   const { isConnected, address } = useWallet()
@@ -27,6 +22,7 @@ export function SmartAccountDeployer() {
   const { userOpHash, transactionHash } = userOp
 
   // State for selected smart account
+  const [selectedNetwork, setSelectedNetwork] = useState<ChainType>('base')
   const [selectedAccount, setSelectedAccount] = useState<SmartAccount | null>(null)
   const [smartAccounts, setSmartAccounts] = useState<SmartAccount[]>([])
   const [campaignName, setCampaignName] = useState('')
@@ -38,7 +34,7 @@ export function SmartAccountDeployer() {
   const [loading, setLoading] = useState(false)
 
   // Fetch smart accounts when connected
-  const fetchSmartAccounts = useCallback(async (address: string) => {
+  const fetchSmartAccounts = async (address: string) => {
     if (!address) return
 
     try {
@@ -49,16 +45,17 @@ export function SmartAccountDeployer() {
       }
       const accounts = await response.json()
       setSmartAccounts(accounts)
-    } catch (err) {
+    } catch (error) {
+      console.error('Error fetching smart accounts:', error)
       setError('Failed to fetch smart accounts')
     }
-  }, [setSmartAccounts, setError])
+  }
 
   useEffect(() => {
     if (isConnected && address) {
       fetchSmartAccounts(address)
     }
-  }, [isConnected, address, fetchSmartAccounts])
+  }, [isConnected, address])
 
   const createNewSmartAccount = async () => {
     if (!address) return
@@ -73,7 +70,7 @@ export function SmartAccountDeployer() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ownerAddress: address,
-          network: 'base-sepolia'
+          network: selectedNetwork
         }),
       })
 
@@ -102,35 +99,41 @@ export function SmartAccountDeployer() {
     }
   }
 
-  const deployContracts = useCallback(async () => {
+  const handleDeployCampaign = async () => {
     if (!selectedAccount || !address) return
 
     try {
+      setLoading(true)
       setError('')
       setSuccess('')
+
       const campaignDetails: CampaignDetails = {
         name: campaignName,
-        goal: parseFloat(campaignGoal),
+        goal: (parseFloat(campaignGoal) * 1e18).toString(), // Convert to wei and string
         description: campaignDescription,
-        duration: parseInt(campaignDuration)
+        duration: parseInt(campaignDuration, 10) * 24 * 60 * 60 // Convert days to seconds
       }
 
-      const result = await userOp.deployContractsViaUserOp(
+      const response = await userOp.deployCampaign(
         selectedAccount.smartAccountAddress as Address,
-        address as Address,
-        'base-sepolia',
-        { ...campaignDetails, goal: campaignDetails.goal.toString() }
+        address,
+        campaignDetails,
+        selectedNetwork
       )
 
-      if (result.userOpHash) {
+      if (response.userOpHash) {
         setSuccess('Contracts deployed successfully!')
       } else {
         setError('Failed to deploy contracts')
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setError(errorMessage)
+      console.error('Deployment error:', error)
+    } finally {
+      setLoading(false)
     }
-  }, [selectedAccount, address, campaignName, campaignGoal, campaignDescription, campaignDuration, userOp])
+  }
 
   if (!isConnected) {
     return (
@@ -144,7 +147,22 @@ export function SmartAccountDeployer() {
     <div className="p-4 bg-primary-dark/30 rounded-lg border border-secondary-main/30">
       <h2 className="text-xl font-bold text-text-primary mb-4 font-secondary">Deploy with Smart Account</h2>
 
-      {isConnected && <NetworkSwitcher />}
+      {isConnected && (
+        <div className="flex items-center space-x-4 mb-4">
+          <span className="text-sm font-medium">Network:</span>
+          <select
+            value={selectedNetwork}
+            onChange={(e) => setSelectedNetwork(e.target.value as ChainType)}
+            className="px-3 py-2 border rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+          >
+            {Object.entries(CHAINS).map(([key, chain]) => (
+              <option key={key} value={key}>
+                {chain.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="mt-6 space-y-6">
         {/* Smart Account Section */}
@@ -192,17 +210,17 @@ export function SmartAccountDeployer() {
             <div className="space-y-4">
               <p className="text-text-primary">You don't have any smart accounts yet. Create one to get started.</p>
               <button
-                onClick={createNewSmartAccount}
-                disabled={loading}
-                className="px-4 py-2 text-sm font-medium rounded font-primary transition-colors focus:outline-none bg-secondary-main text-secondary-contrast hover:bg-secondary-light shadow-neon disabled:opacity-50"
+                onClick={handleDeployCampaign}
+                disabled={!selectedAccount || loading}
+                className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark disabled:opacity-50"
               >
-                {loading ? 'Creating...' : 'Create Smart Account'}
+                {loading ? 'Deploying...' : 'Deploy Campaign'}
               </button>
             </div>
           )}
         </div>
 
-        {/* Campaign Details Section */}
+// ... (rest of the code remains the same)
         {selectedAccount && (
           <div className="space-y-4">
             <Typography variant="h3" className="mb-2">Campaign Details</Typography>

@@ -1,3 +1,42 @@
+// Chain configurations
+export type ChainType = keyof typeof CHAINS
+export const CHAINS = {
+  base: {
+    id: 8453,
+    name: 'Base',
+    network: 'base',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'Ether',
+      symbol: 'ETH',
+    },
+    rpcUrls: {
+      default: { http: ['https://mainnet.base.org'] },
+      public: { http: ['https://mainnet.base.org'] },
+    },
+    blockExplorers: {
+      default: { name: 'Basescan', url: 'https://basescan.org' },
+    },
+  },
+  baseSepolia: {
+    id: 84532,
+    name: 'Base Sepolia',
+    network: 'base-sepolia',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'Base Sepolia ETH',
+      symbol: 'ETH',
+    },
+    rpcUrls: {
+      default: { http: ['https://sepolia.base.org'] },
+      public: { http: ['https://sepolia.base.org'] },
+    },
+    blockExplorers: {
+      default: { name: 'Basescan', url: 'https://sepolia.basescan.org' },
+    },
+  },
+} as const
+
 // API configuration
 const config = {
   // API base URL - change this for different environments
