@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useWallet } from '../web3/hooks/useWallet'
 import { useUserOp } from '../web3/services/UserOpService'
+import { useContractDeployment } from '../web3/services/DeploymentService'
 import config, { CHAINS, ChainType } from '../config'
 import { type Address } from 'viem'
 import { CampaignDetails } from '../types'
@@ -29,9 +30,11 @@ export function SmartAccountDeployer() {
   const [campaignGoal, setCampaignGoal] = useState('1.0')
   const [campaignDescription, setCampaignDescription] = useState('')
   const [campaignDuration, setCampaignDuration] = useState('30')
-  const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const { deployContracts } = useContractDeployment()
 
   // Fetch smart accounts when connected
   const fetchSmartAccounts = async (address: string) => {
@@ -277,7 +280,12 @@ export function SmartAccountDeployer() {
               <button
                 disabled={loading || !campaignName || !campaignGoal || !campaignDescription || !campaignDuration}
                 className="w-full py-2 px-4 bg-primary-main hover:bg-primary-dark text-white rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={deployContracts}
+                onClick={() => deployContracts({
+                  name: campaignName,
+                  description: campaignDescription,
+                  goal: campaignGoal,
+                  duration: campaignDuration
+                })}
               >
                 {loading ? 'Deploying...' : 'Deploy Contracts via Smart Account'}
               </button>
