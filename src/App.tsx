@@ -12,6 +12,8 @@ import { Typography } from './components/ui'
 import TestContractDeployment from './components/TestContractDeployment'
 // Import DeployManagedCampaign as default export
 import DeployManagedCampaign from './components/DeployManagedCampaign'
+// Import SseDemo component
+import SseDemo from './components/SseDemo'
 
 function App() {
   const [currentNav, setCurrentNav] = useState('home');
@@ -95,6 +97,10 @@ function App() {
                     onClick={() => handleNavItemClick('about')}>
                     About
                   </li>
+                  <li className={`cursor-pointer transition-colors hover:text-accent-main ${currentNav === 'ssedemo' ? 'border-b-2 border-accent-main' : ''} ${isMobile ? 'block px-6 py-2' : ''}`}
+                    onClick={() => handleNavItemClick('ssedemo')}>
+                    SSE Demo
+                  </li>
                 </ul>
               </nav>
             </div>
@@ -173,6 +179,14 @@ function App() {
 
               {currentNav === 'donate' && (
                 <CampaignList />
+              )}
+
+              {currentNav === 'ssedemo' && (
+                <div>
+                  <h1 className="text-3xl font-bold mb-6 font-secondary glow-text">Server-Sent Events Demo</h1>
+                  <p className="mb-6 text-text-primary font-primary">This demo connects to a server running at localhost:4000 and displays real-time updates using Server-Sent Events (SSE).</p>
+                  <SseDemo />
+                </div>
               )}
 
               {currentNav === 'story' && (
